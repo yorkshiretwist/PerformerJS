@@ -8,8 +8,8 @@ This work is released under a Creative Commons Attribution-ShareAlike 3.0 licenc
 
 You are free:
 
-* to Share — to copy, distribute and transmit the work
-* to Remix — to adapt the work
+* to Share ï¿½ to copy, distribute and transmit the work
+* to Remix ï¿½ to adapt the work
 
 Under the following conditions:
 
@@ -746,7 +746,7 @@ var Performer =
             }
             // field must be a number
             if (hcn(field, 'field-required-number') || hcn(field, 'field-optional-number')) {
-                var num = val.replace(",", "").replace("&pound;", "").replace("£", "");
+                var num = val.replace(",", "").replace("&pound;", "").replace("ï¿½", "");
                 if ((hcn(field, 'field-required-number') && num == "") || (num != "" && isNaN(parseFloat(num)))) {
                     fn(identity, 'error', 'This field must be a number');
                     fail = true;
@@ -1673,42 +1673,18 @@ var Performer =
     // check element has class name
     hasClassName: function(el, cls) {
         if (!el || typeof el == 'undefined') { return false; }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.hasClassName(cls); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).hasClass(cls); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return $(el).hasClass(cls); }
-		//-mootools
     },
     // shortcut for getElementById (handles multiple elements)
     $: function(el) {
         if (typeof el == 'object') { return el; }
         if (typeof el == 'undefined') { return false; }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return $(el); }
-		//-prototype
-		//+mootools
 		if (P.MooTools) { return $(el); }
-		//-mootools
-		//+jquery
-        if (P.jQuery) { return jQuery('#' + el)[0]; }
-		//-jquery
     },
     // shortcut for getElementByClassName (handles multiple elements)
     $$: function(cls) {
         var els;
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { els = $$(cls); }
-		//-prototype
-		//+mootools
 		if (P.MooTools) { els = $$(cls); }
-		//-mootools
-		//+jquery
-        if (P.jQuery) { els = jQuery(cls); }
-		//-jquery
         if (els && els.length > 0) {
             return els;
         } else {
@@ -1719,29 +1695,13 @@ var Performer =
     $F: function(el) {
         var elid = P.identify(el);
         var fields;
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { fields = el.getElements(); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { fields = jQuery('#' + elid + ' :input'); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { fields = $$("#" + elid + " input", "#" + elid + " textarea", "#" + elid + " select", "#" + elid + " button"); }
-		//-mootools
         return fields;
     },
     // return the node name of an element
     nodeName: function(el) {
         var nn = false;
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { nn = el.nodeName.toLowerCase(); }
-		//-prototype
-		//+mootools
 		if (P.MooTools) { nn = el.nodeName.toLowerCase(); }
-		//-mootools
-		//+jquery
-        if (P.jQuery) { nn = el.tagName.toLowerCase(); }
-		//-jquery
         if (!nn || typeof nn == 'undefined' || nn == '#document') {
             return false;
         } else {
@@ -1753,103 +1713,39 @@ var Performer =
         var s;
         if (value) {
             s = type + "[" + attr + "='" + value + "']";
-			//+prototype
-            if (P.Prototype || P.Scriptaculous) { return document.getElementsBySelector(s); }
-			//-prototype
-			//+jquery
-            if (P.jQuery) { return jQuery(s); }
-			//-jquery
-			//+mootools
             if (P.MooTools) { return document.getElements(s); }
-			//-mootools
         } else {
             s = type + "[" + attr + "]";
-			//+prototype
-            if (P.Prototype || P.Scriptaculous) { return document.getElementsBySelector(s); }
-			//-prototype
-			//+jquery
-            if (P.jQuery) { return jQuery(s); }
-			//-jquery
-			//+mootools
             if (P.MooTools) { return document.getElements(s); }
-			//-mootools
         }
     },
     // get the value of a form field
     getValue: function(el) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.getValue(); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).val(); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return el.get('value'); }
-		//-mootools
     },
     // set the value of a form field
     setValue: function(el, value) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { el.value = value; return el; }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).val(value); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return el.set('value', value); }
-		//-mootools
     },
     // get the first parent matching the filter
     up: function(el, filter) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.up(filter); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).parent(filter)[0]; }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return el.getParent(filter); }
-		//-mootools
     },
     // serialise form fields
     serialize: function(el) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.serialize(true); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).serialize(); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return el.toQueryString(); }
-		//-mootools
     },
     // update the innerHTML of an element
     update: function(el, html) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.update(html); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).html(html); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return el.set('text', html); }
-		//-mootools
     },
     // insert HTML after an element
     insertAfter: function(el, html) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return new Insertion.After(el, html); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).after(html); }
-		//-jquery
-		//+mootools
         if (P.MooTools) {
             if (html.trim().substr(0, 1) !== '<') { html = '<span>' + html + '</span>'; }
             var i = new Element('div', { 'html': html });
             return i.inject(el, 'after');
         }
-		//-mootools
     },
     // increment the counter
     increment: function() {
@@ -1868,27 +1764,11 @@ var Performer =
     },
     // get an element attribute
     getAttribute: function(el, attr) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.readAttribute(attr); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).attr(attr); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return el.get(attr); }
-		//-mootools
     },
     // set an element attribute
     setAttribute: function(el, attr, val) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.writeAttribute(attr, val); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).attr(attr, val); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return el.set(attr, val); }
-		//-mootools
     },
     // remove an element attribute
     removeAttribute: function(el, attr) {
@@ -1896,22 +1776,10 @@ var Performer =
     },
     // remove an element completely
     remove: function(el) {
-		//+prototype
-        if (P.Scriptaculous) { Effect.Fade(el, { duration: 0.5 }); }
-        if (P.Prototype || P.Scriptaculous) { return el.remove(); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) {
-            jQuery(el).fadeOut("normal");
-            return jQuery(el).remove();
-        }
-		//-jquery
-		//+mootools
         if (P.MooTools) {
             el.fade('out');
             return el.destroy();
         }
-		//-mootools
     },
     // get an elements children
     children: function(el, selector) {
@@ -1919,27 +1787,11 @@ var Performer =
             selector = selector.replace('-', ' ');
             el = P.$$(selector);
         }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.childElements(); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).children(); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return el.getChildren(); }
-		//-mootools
     },
     // get an elements ancestors
     ancestors: function(el) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.ancestors(); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).parents(); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return el.getParents(); }
-		//-mootools
     },
     // get array of classnames for an element
     classNames: function(el) {
@@ -1961,41 +1813,17 @@ var Performer =
     // is an element visible
     visible: function(el) {
         if (typeof (el) != 'object') { el = P.$(el); }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.visible(); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).is(":visible"); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { if (el.getStyle('display') == 'none') { return false; } else { return true; } }
-		//-mootools
     },
     // add a class name
     addClassName: function(el, cls) {
         if (typeof (el) != 'object') { el = P.$(el); }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.addClassName(cls); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).addClass(cls); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return $(el).addClass(cls); }
-		//-mootools
     },
     // remove a class name
     removeClassName: function(el, cls) {
         if (typeof (el) != 'object') { el = P.$(el); }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.removeClassName(cls); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).removeClass(cls); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return $(el).removeClass(cls); }
-		//-mootools
     },
     // set the class name
     className: function(el, cls) {
@@ -2004,107 +1832,35 @@ var Performer =
     },
     // disable the context menu on an element
     disableContext: function(el) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { P.bind(el, 'contextmenu', function(e) { e.stop(); }); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { P.bind(el, 'contextmenu', function(e) { return false; }); }
-		//-jquery
         if (P.MooTools) { return P.bind(el, 'contextmenu', function(e) { e.stop(); }); }
     },
     // hide an element, with an optional effect
     doHide: function(el, effect) {
         if (typeof (el) != 'object') { el = P.$(P.identify(el)); }
-		//+prototype
-        if (P.Prototype) { return el.hide(); }
-		if (P.Scriptaculous) {
-            if (!effect || P.Effects.PerformerIndexOf(effect) == -1) {
-                return el.hide();
-            } else {
-                if (effect == 'slideup') { return Effect.Fade(el, { duration: 0.5 }); } // SlideUp causes errors 
-                if (effect == 'slidedown') { return Effect.Appear(el, { duration: 0.5 }); }// SlideDown causes errors
-                if (effect == 'blinddown') { return Effect.BlindDown(el, { duration: 0.5 }); }
-                if (effect == 'blindup') { return Effect.BlindUp(el, { duration: 0.5 }); }
-                if (effect == 'fadein') { return Effect.Appear(el, { duration: 0.5 }); }
-                if (effect == 'fadeout') { return Effect.Fade(el, { duration: 0.5 }); }
-            }
-        }
-		//-prototype
-		//+jquery
-		if (P.jQuery) {
-            if (!effect || P.Effects.PerformerIndexOf(effect) == -1) {
-                return jQuery(el).hide();
-            } else {
-                if (effect == 'slideup' || effect == 'blindup') { return jQuery(el).slideUp("normal"); }
-                if (effect == 'slidedown' || effect == 'blinddown') { return jQuery(el).slideDown("normal"); }
-                if (effect == 'fadein') { return jQuery(el).fadeIn("normal"); }
-                if (effect == 'fadeout') { return jQuery(el).fadeOut("normal"); }
-            }
-        }
-		//-jquery
-		//+mootools
 		if (P.MooTools) {
             el.fade('out');
             el.setStyle('display', 'none');
             return el;
         }
-		//-mootools
         return false;
     },
     // show an element, with an optional effect
     doShow: function(el, effect) {
         if (typeof (el) != 'object') { el = P.$(P.identify(el)); }
-        //+prototype
-		if (P.Prototype) { return el.show(); }
-		if (P.Scriptaculous) {
-            if (!effect || P.Effects.PerformerIndexOf(effect) == -1) {
-                return el.show();
-            } else {
-                if (effect == 'slideup') { return Effect.Fade(el, { duration: 0.5 }); } // SlideUp causes errors
-                if (effect == 'slidedown') { return Effect.Appear(el, { duration: 0.5 }); } // SlideDown causes errors
-                if (effect == 'blinddown') { return Effect.BlindDown(el, { duration: 0.5 }); }
-                if (effect == 'blindup') { return Effect.BlindUp(el, { duration: 0.5 }); }
-                if (effect == 'fadein') { return Effect.Appear(el, { duration: 0.5 }); }
-                if (effect == 'fadeout') { return Effect.Fade(el, { duration: 0.5 }); }
-            }
-        }
-		//-prototype
-		//+jquery
-		if (P.jQuery) {
-            if (!effect || P.Effects.PerformerIndexOf(effect) == -1) {
-                return jQuery(el).show();
-            } else {
-                if (effect == 'slideup' || effect == 'blindup') { return jQuery(el).slideUp("normal"); }
-                if (effect == 'slidedown' || effect == 'blinddown') { return jQuery(el).slideDown("normal"); }
-                if (effect == 'fadein') { return jQuery(el).fadeIn("normal"); }
-                if (effect == 'fadeout') { return jQuery(el).fadeOut("normal"); }
-            }
-        }
-		//-jquery
-		//+mootools
 		if (P.MooTools) {
             el.setStyle('display', 'block');
             el.fade('in');
             return el;
         }
-		//-mootools
         return false;
     },
     // do an AJAX request
     Request: function(targetPage, requestMethod, params, successFunction) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { new Ajax.Request(targetPage, { method: requestMethod, parameters: params, onSuccess: successFunction }); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery.ajax({ type: requestMethod, url: targetPage, data: params, success: successFunction }); }
-		//-jquery
-		//+mootools
         if (P.MooTools) {
             var myRequest = new Request({ method: requestMethod, url: targetPage, data: params, onSuccess: successFunction });
             myRequest.send();
             return myRequest;
         }
-		//-mootools
     },
     // get the response from an AJAX request
     getRequestText: function(request) {
@@ -2124,20 +1880,6 @@ var Performer =
     // find the first ancestor element of an element which triggered an event
     findEventElement: function(e, tag) {
         var target;
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return Event.findElement(e, tag); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) {
-            target = P.eventElement(e);
-            if (target && target.nodeName && target.nodeName.toLowerCase() == tag.toLowerCase()) {
-                return target;
-            } else {
-                return jQuery(target).parents(tag)[0];
-            }
-        }
-		//-jquery
-		//+mootools
         if (P.MooTools) {
             target = P.eventElement(e);
             if (target && target.nodeName && target.nodeName.toLowerCase() == tag.toLowerCase()) {
@@ -2146,55 +1888,22 @@ var Performer =
                 return $(target).getParent(tag);
             }
         }
-		//-mootools
     },
     // bind an event on the document to a function
     domLoaded: function(func) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { P.bind(document, "dom:loaded", func); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(document).ready(func); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return P.bind(window, 'domready', func); }
-		//-mootools
     },
     // bind an event on an element to a function
     bind: function(el, event, func) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { Event.observe(el, event, func); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).bind(event, func); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return $(el).addEvent(event, func); }
-		//-mootools
     },
     // unbind a function from an event on an element
     unBind: function(el, event, func) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { Event.stopObserving(el, event, func); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { return jQuery(el).unbind(event, func); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { return $(el).removeEvent(event, func); }
-		//-mootools
     },
     // stop the default action of an event firing, including bubbling and propigation
     stopEvent: function(e) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { e.preventDefault(); e.stopPropagation(); Event.stop(e); return false; }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { e.preventDefault(); e.stopPropagation(); return false; }
-		//-jquery
-		//+mootools
         if (P.MooTools) { e.stop(); return false; }
-		//-mootools
         return false;
     },
     // stop the event propagating upwards
@@ -2205,58 +1914,27 @@ var Performer =
     // get the dimensions of an element
     getDimensions: function(el) {
         var size, getsize;
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.getDimensions(); }
-		//-prototype
 		size = {};
-		//+jquery
-        if (P.jQuery) {
-            size.height = jQuery(el).outerHeight();
-            size.width = jQuery(el).outerWidth();
-        }
-		//-jquery
-		//+mootools
         if (P.MooTools) {
             getsize = el.getSize();
             size.height = getsize.y;
             size.width = getsize.x;
         }
-		//-mootools
         return size;
     },
     // set the css style of an element
     setStyle: function(el, style) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.setStyle(style); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { jQuery(el).css(style); }
-		//-jquery
-		//+mootools
         if (P.MooTools) { $(el).setStyles(style); }
-		//-mootools
     },
     //animate properties of an element
     animate: function(el, params, duration) {
         var elid = P.identify(el);
         if (typeof (el) != 'object') { el = P.$(elid); }
-		//+prototype
-        if (P.Scriptaculous) { $(elid).morph(params, { duration: duration }); }
-		if (P.Prototype) { $(elid).setStyle(params); }
-		//-prototype
-		//+jquery
-        if (P.jQuery) { 
-			duration = duration * 1000;
-            jQuery(el).animate(params, duration); 
-        }
-		//-jquery
-		//+mootools
         if (P.MooTools) {
 			duration = duration * 1000;
 			var fx = new Fx.Morph(elid, {duration: duration, transition: Fx.Transitions.Sine.easeOut});
 			fx.start(params);
 		}
-		//-mootools
     },
 	// set up the CSS properties for morphing
 	setupMorphProperties: function(props, cls) {
@@ -2264,30 +1942,11 @@ var Performer =
 		var param, params, i, j;
 		var cp = P.classParam;
 		// loop properties, filling the output properties
-		//+prototype
-		if (P.Scriptaculous || P.Prototype) {
-			params = '';
-			for (i = 0, j = props.length; i < j; i++) {
-				param = cp(cls, props[i], false);
-				var name = props[i];
-				name = name.replace('backgroundColor', 'background');
-				name = name.replace('fontSize', 'font-size');
-				name = name.replace('borderWidth', 'border-width');
-				name = name.replace('lineHeight', 'line-height');
-				// make sure parameters with no size scale (px, em, pt) have px appended
-				param = P.fixCSSParam(name, param);
-				params += name + ': ' + param + '; ';
-			}
-		} else {
-		//-prototype
 			params = {};
 			for (i = 0, j = props.length; i < j; i++) {
 				param = cp(cls, props[i], false);
 				if (param !== false) { params[props[i]] = param.replace("px", ""); }
 			}
-		//+prototype
-		}
-		//-prototype
 		return params;
 	},
 	// make sure CSS parameters with no size scale (px, em, pt) have px appended
@@ -2314,12 +1973,10 @@ var Performer =
     // return the mouse position
     // non-MooTools code from http://www.quirksmode.org/js/events_properties.html#position
     cursorPosition: function(e) {
-		//+mootools
         if (P.MooTools) {
             var event = new Event(e);
             return [event.page.x, event.page.y];
         } else {
-		//-mootools
             var posx = 0;
             var posy = 0;
             if (!e) { e = window.event; }
@@ -2334,9 +1991,7 @@ var Performer =
                 posy = e.clientY + db.scrollTop + de.scrollTop;
             }
             return [posx, posy];
-		//+mootools
         }
-		//-mootools
     },
     // return the position of an element
     // from http://www.quirksmode.org/js/findpos.html
