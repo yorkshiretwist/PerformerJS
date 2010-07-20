@@ -2,26 +2,20 @@
 Performer JavaScript library (http://performerjs.org)
 Created by Chris Taylor (http://www.stillbreathing.co.uk)
 Additional work by kourge and Danny Linkov
-Version 1.0
+Version 1.0.1
 
-This work is released under a Creative Commons Attribution-ShareAlike 3.0 licence
+This work is released under any of the following licenses, please choose the one you wish to use:
 
-You are free:
+- Creative Commons Attribution-ShareAlike 3.0 licence (http://creativecommons.org/licenses/by-sa/3.0/)
+- Microsoft Public License (http://www.opensource.org/licenses/ms-pl.html)
+- MIT License (http://www.opensource.org/licenses/mit-license.php)
+- BSD License (http://www.opensource.org/licenses/bsd-license.php)
 
-* to Share � to copy, distribute and transmit the work
-* to Remix � to adapt the work
-
-Under the following conditions:
-
-* Attribution. You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
-* Share Alike. If you alter, transform, or build upon this work, you may distribute the resulting work only under the same, similar or a compatible license.
-* For any reuse or distribution, you must make clear to others the license terms of this work. The best way to do this is with a link to this web page: http://performerjs.org.
-* Any of the above conditions can be waived if you get permission from the copyright holder.
-* Nothing in this license impairs or restricts the author's moral rights.
+More details: http://performerjs.org/license
 */
 var Performer =
 {
-    version: '1.0',
+    version: '1.0.1',
     Scriptaculous: false,
     Prototype: false,
     jQuery: false,
