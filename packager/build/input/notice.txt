@@ -2,7 +2,7 @@
 Performer JavaScript library (http://performerjs.org)
 Created by Chris Taylor (http://www.stillbreathing.co.uk)
 Additional work by kourge and Danny Linkov
-Version 1.0.1
+Version 1.0.2
 
 This work is released under any of the following licenses, please choose the one you wish to use:
 
