@@ -2,7 +2,7 @@
 Performer JavaScript library (http://performerjs.org)
 Created by Chris Taylor (http://www.stillbreathing.co.uk)
 Additional work by kourge and Danny Linkov
-Version 1.0.2
+Version 1.0.3
 
 This work is released under any of the following licenses, please choose the one you wish to use:
 
@@ -13,7 +13,7 @@ This work is released under any of the following licenses, please choose the one
 */
 var Performer =
 {
-    version: '1.0.2',
+    version: '1.0.3',
     Scriptaculous: false,
     Prototype: false,
     jQuery: false,
@@ -103,7 +103,7 @@ var Performer =
         P.Listeners(el, '.popup', 'Tooltip', 'mouseover,focus', reinit);
         P.Listeners(el, '.modalwindower', 'ModalWindow', 'click,keypress', reinit);
         P.Listeners(el, '.modalwindowcloser', 'CloseModal', 'click,keypress', reinit);
-        P.Listeners(el, '.contextmenuer', 'ContextMenu', 'contextMenu', reinit);
+        P.Listeners(el, '.contextmenuer', 'ContextMenu', 'mouseup', reinit);
         P.Listeners(el, '.styler', 'Style', 'click,keypress', reinit);
         P.Listeners(el, '.duplicator', 'Duplicate', 'click,keypress', reinit);
 		P.Listeners(el, '.morpher', 'Morph', 'click,keypress', reinit);
