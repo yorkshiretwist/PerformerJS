@@ -99,6 +99,7 @@ var Performer =
         P.Listeners(el, '.looperback', 'Loop', 'click,keypress', reinit);
         P.Listeners(el, '.looperfirst', 'Loop', 'click,keypress', reinit);
         P.Listeners(el, '.looperlast', 'Loop', 'click,keypress', reinit);
+		P.Listeners(el, '.looperitem', 'Loop', 'click,keypress', reinit);
         P.Listeners(el, '.tooltipper', 'Tooltip', 'mouseover,focus', reinit);
         P.Listeners(el, '.popup', 'Tooltip', 'mouseover,focus', reinit);
         P.Listeners(el, '.modalwindower', 'ModalWindow', 'click,keypress', reinit);
@@ -394,7 +395,9 @@ var Performer =
 				var v = P.visible;
 				var dbg = P.Debug;
 				var h = P.Hide;
-                P.forEach(P.children(P.$(loop)), function(child) {
+				var children = P.children(P.$(loop));
+				var len = children.length;
+                P.forEach(children), function(child) {
                     if (n(child) && v(child)) {
                         dbg('- Currently showing item ' + i, 'subfunction');
                         nowshowing = i;
@@ -405,17 +408,21 @@ var Performer =
                 if (P.hasClassName(el, 'looperback')) {
                     P.Debug('Performer.Loop (back)', 'function');
                     toshow = nowshowing - 1;
-                    if (toshow < 0) { toshow = (P.children(P.$(loop)).length - 1); }
+                    if (toshow < 0) { toshow = (len - 1); }
                 } else if (P.hasClassName(el, 'looperforward')) {
                     P.Debug('Performer.Loop (forward)', 'function');
                     toshow = nowshowing + 1;
-                    if (toshow >= P.children(P.$(loop)).length) { toshow = 0; }
+                    if (toshow >= len) { toshow = 0; }
                 } else if (P.hasClassName(el, 'looperfirst')) {
                     P.Debug('Performer.Loop (first)', 'function');
                     toshow = 0;
                 } else if (P.hasClassName(el, 'looperlast')) {
                     P.Debug('Performer.Loop (last)', 'function');
-                    toshow = P.children(P.$(loop)).length - 1;
+                    toshow = len - 1;
+                } else if (P.hasClassName(el, 'looperitem')) {
+					toshow = P.classParam(cls, "item", 1);
+					if (toshow >= len) toshow = len - 1;
+                    P.Debug('Performer.Loop ('+toshow+')', 'function');
                 }
                 P.Debug('- Showing item ' + toshow, 'subfunction');
                 P.Show(P.children(P.$(loop))[toshow], "fadein");
