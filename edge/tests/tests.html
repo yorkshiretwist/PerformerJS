@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Performer Test Suite</title>
+  <link rel="stylesheet" href="qunit-1.14.0.css">
+  <style type="text/css">
+	#qunit { float: right; width: 60%; }
+	.module { display: block; }
+	.test { border-left: 3px solid #fff; }
+	.test.passed { border-left-color: #C6E746; color: #ccc; }
+	.test.failed { border-left-color: #EE5757; }
+	.box { border: 1px solid #ccc; padding: 1em; }
+  </style>
+</head>
+<body>
+	<div id="top"></div>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	
+	<div class="module" id="Hider">
+		<h1>Hider</h1>
+		<div class="test" id="hide">
+			<h2>Hide</h2>
+			<p class="hider" id="hide-target">Target</p>
+		</div>
+	</div>
+	
+	<div class="module" id="Shower">
+		<h1>Shower</h1>
+		<div class="test" id="show">
+			<h2>Show</h2>
+			<p class="shower" id="show-target">Target</p>
+		</div>
+	</div>
+
+	<div class="module" id="Toggler">
+		<h1>Toggler</h1>
+		<div class="test" id="toggler-id">
+			<h2>Target by ID</h2>
+			<p><a href="#" class="toggler" data-target="#toggler-id-target">Toggle</a></p>
+			<p class="hider" id="toggler-id-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-class">
+			<h2>Target by class</h2>
+			<p><a href="#" class="toggler" data-target="#toggler-class .toggler-class-target">Toggle</a></p>
+		<p class="hider toggler-class-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-class-param">
+			<h2>Target by class parameter</h2>
+			<p><a href="#" class="toggler targetEl-toggler-class-param-target">Toggle</a></p>
+			<p class="hider" id="toggler-class-param-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-checkbox">
+			<h2>Toggle by checkbox</h2>
+			<p><input type="checkbox" class="toggler" data-target="#toggler-checkbox-target" /></p>
+			<p class="hider" id="toggler-checkbox-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-checkbox-checked">
+			<h2>Toggle by checkbox (checked)</h2>
+			<p><input type="checkbox" checked="checked" class="toggler" data-target="#toggler-checkbox-checked-target" /></p>
+			<p class="hider" id="toggler-checkbox-checked-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-select">
+			<h2>Toggle by select list option</h2>
+			<p>
+				<select class="toggler">
+					<option>Please select...</option>
+					<option data-target="#toggler-select-target1">Option 1</option>
+					<option data-target="#toggler-select-target2">Option 2</option>
+					<option data-target="#toggler-select-target3">Option 3</option>
+				</select>
+			</p>
+			<p class="hider" id="toggler-select-target1">You chose option 1</p>
+			<p class="hider" id="toggler-select-target2">You chose option 2</p>
+			<p class="hider" id="toggler-select-target3">You chose option 3</p>
+		</div>
+		<div class="test" id="toggler-radio">
+			<h2>Toggle by radio option</h2>
+			<p><input type="radio" name="toggler-radio" id="toggler-radio-option1" class="toggler" data-target="#toggler-radio-target1" /> Option 1</p>
+			<p><input type="radio" name="toggler-radio" id="toggler-radio-option2" class="toggler" data-target="#toggler-radio-target2" /> Option 2</p>
+			<p class="hider" id="toggler-radio-target1">You chose option 1</p>
+			<p class="hider" id="toggler-radio-target2">You chose option 2</p>
+		</div>
+		<div class="test" id="toggler-id-showeffect">
+			<h2>Target by ID with show effect</h2>
+			<p><a href="#" class="toggler" data-target="#toggler-id-showeffect-target" data-showeffect="fadein">Toggle</a></p>
+			<p class="hider" id="toggler-id-showeffect-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-class-param-showeffect">
+			<h2>Target by class parameter with show effect</h2>
+			<p><a href="#" class="toggler targetEl-toggler-class-param-showeffect-target showeffect-fadein">Toggle</a></p>
+			<p class="hider" id="toggler-class-param-showeffect-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-id-hideeffect">
+			<h2>Target by ID with hide effect</h2>
+			<p><a href="#" class="toggler" data-target="#toggler-id-hideeffect-target" data-hideeffect="fadeout">Toggle</a></p>
+			<p id="toggler-id-hideeffect-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-class-param-hideeffect">
+			<h2>Target by class parameter with hide effect</h2>
+			<p><a href="#" class="toggler targetEl-toggler-class-param-hideeffect-target hideeffect-fadeout">Toggle</a></p>
+			<p id="toggler-class-param-hideeffect-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-id-move">
+			<h2>Target by ID and allow moving</h2>
+			<p><a href="#toggler-id-move" class="toggler" data-target="#toggler-id-move-target" data-move="true">Toggle</a></p>
+			<p class="hider" id="toggler-id-move-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-id-move-absolute">
+			<h2>Target by ID and allow moving with absolute URL</h2>
+			<p><a href="http://www.google.com#toggler-id-move-absolute" class="toggler" data-target="#toggler-id-move-absolute-target" data-move="true">Toggle</a></p>
+			<p class="hider" id="toggler-id-move-absolute-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-class-param-move">
+			<h2>Target by class parameter and allow moving</h2>
+			<p><a href="#toggler-class-param-move" class="toggler targetEl-toggler-class-param-move-target move-true">Toggle</a></p>
+			<p class="hider" id="toggler-class-param-move-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-class-param-move-absolute">
+			<h2>Target by class parameter and allow moving with absolute URL</h2>
+			<p><a href="#toggler-class-param-move-absolute" class="toggler targetEl-toggler-class-param-move-absolute-target move-true">Toggle</a></p>
+			<p class="hider" id="toggler-class-param-move-absolute-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-id-show-parents">
+			<h2>Target by ID showing hidden parent elements</h2>
+			<p><a href="#" class="toggler" data-target="#toggler-id-show-parents-target">Toggle</a></p>
+			<div class="hider box" id="toggler-id-show-parents-target-parent">
+				<p class="hider" id="toggler-id-show-parents-target">Toggled content</p>
+			</div>
+		</div>
+		<div class="test" id="toggler-class-param-show-parents">
+			<h2>Target by class parameter showing hidden parent elements</h2>
+			<p><a href="#" class="toggler targetEl-toggler-class-param-show-parents-target">Toggle</a></p>
+			<div class="hider box" id="toggler-class-param-show-parents-target-parent">
+				<p class="hider" id="toggler-class-param-show-parents-target">Toggled content</p>
+			</div>
+		</div>
+		<div class="test" id="toggler-id-delay">
+			<h2>Target by ID with delay</h2>
+			<p><a href="#" class="toggler" data-target="#toggler-id-delay-target" data-delay="2">Toggle</a></p>
+			<p class="hider" id="toggler-id-delay-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-class-param-delay">
+			<h2>Target by class parameter with delay</h2>
+			<p><a href="#" class="toggler targetEl-toggler-class-param-delay-target delay-2">Toggle</a></p>
+			<p class="hider" id="toggler-class-param-delay-target">Toggled content</p>
+		</div>
+	</div>
+	
+	<div class="module" id="GroupToggler">
+		<h1>GroupToggler</h1>
+		<div class="test" id="grouptoggler-class-param">
+			<h2>Target by class parameter</h2>
+			<p><a href="#" class="grouptoggler targetEl-grouptoggler-class-param-target">Toggle</a></p>
+			<ul>
+				<li>One</li>
+				<li class="grouptoggler-class-param-target hider">Two</li>
+				<li>Three</li>
+				<li class="grouptoggler-class-param-target hider">Four</li>
+				<li>Five</li>
+				<li class="grouptoggler-class-param-target hider">Six</li>
+			</ul>
+		</div>
+	</div>
+	
+	<div class="module" id="Switcher">
+		<h1>Switcher</h1>
+		<div class="test" id="switcher-id">
+			<h2>Target by ID</h2>
+			<p><a href="#" class="switcher" data-target1="#switcher-id-target1" data-target2="#switcher-id-target2">Switch</a></p>
+			<p id="switcher-id-target1">Element 1</p>
+			<p id="switcher-id-target2" class="hider">Element 2</p>
+		</div>
+		<div class="test" id="switcher-class">
+			<h2>Target by class</h2>
+			<p><a href="#" class="switcher" data-target1=".switcher-class-target1" data-target2=".switcher-class-target2">Switch</a></p>
+			<p class="switcher-class-target1">Element 1</p>
+			<p class="switcher-class-target2 hider">Element 2</p>
+		</div>
+		<div class="test" id="switcher-class-param">
+			<h2>Target by class parameter</h2>
+			<p><a href="#" class="switcher targetEl1-switcher-class-param-target1 targetEl2-switcher-class-param-target2">Switch</a></p>
+			<p id="switcher-class-param-target1">Element 1</p>
+			<p id="switcher-class-param-target2" class="hider">Element 2</p>
+		</div>
+	</div>
+	
+	<div class="module" id="Sizer">
+		<h1>Sizer</h1>
+		<div class="test" id="sizer-id-height">
+			<h2>Target by ID, height only</h2>
+			<p><a href="#" class="sizer" data-target="#sizer-id-height-target" data-size="10">Size 10px higher</a></p>
+			<p id="sizer-id-height-target" class="box">Target</p>
+		</div>
+		<div class="test" id="sizer-id-height-width">
+			<h2>Target by ID, height and width</h2>
+			<p><a href="#" class="sizer" data-target="#sizer-id-height-width-target" data-size="10,-10">Size 10px higher and 10px thinner</a></p>
+			<p id="sizer-id-height-width-target" class="box">Target</p>
+		</div>
+	</div>
+
+	<script src="jquery-1.11.0.js"></script>
+	<script src="performer.js"></script>
+	<script src="qunit-1.14.0.js"></script>
+	<script src="tests.config.js"></script>
+	<script src="core.tests.js"></script>
+	<script src="hider.tests.js"></script>
+	<script src="shower.tests.js"></script>
+	<script src="toggler.tests.js"></script>
+	<script src="grouptoggler.tests.js"></script>
+	<script src="switcher.tests.js"></script>
+	<script src="sizer.tests.js"></script>
+</body>
+</html>
