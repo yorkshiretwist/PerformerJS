@@ -91,6 +91,78 @@ if ( testConfig.runAll || testConfig.run.toggler.all || testConfig.run.toggler.g
 
 if ( testConfig.runAll || testConfig.run.toggler.all || testConfig.run.toggler.formelements ) {
 
+	test( "Toggle by button", function() {
+		var testId = 'toggler-button';
+		show();
+		
+		function show() {
+			$( '#' + testId + ' button.toggler' ).click();
+			stop();
+			setTimeout(function(){
+				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
+				start();
+				hide();
+			}, 1000);
+		}
+		
+		function hide() {
+			$( '#' + testId + ' button.toggler' ).click();
+			stop();
+			setTimeout(function(){
+				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
+				start();
+			}, 1000);
+		}
+	});
+	
+	test( "Toggle by input[button]", function() {
+		var testId = 'toggler-input-button';
+		show();
+		
+		function show() {
+			$( '#' + testId + ' input.toggler' ).click();
+			stop();
+			setTimeout(function(){
+				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
+				start();
+				hide();
+			}, 1000);
+		}
+		
+		function hide() {
+			$( '#' + testId + ' input.toggler' ).click();
+			stop();
+			setTimeout(function(){
+				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
+				start();
+			}, 1000);
+		}
+	});
+	
+	test( "Toggle by input[submit]", function() {
+		var testId = 'toggler-input-submit';
+		show();
+		
+		function show() {
+			$( '#' + testId + ' input.toggler' ).click();
+			stop();
+			setTimeout(function(){
+				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
+				start();
+				hide();
+			}, 1000);
+		}
+		
+		function hide() {
+			$( '#' + testId + ' input.toggler' ).click();
+			stop();
+			setTimeout(function(){
+				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
+				start();
+			}, 1000);
+		}
+	});
+
 	test( "Toggle by checkbox", function() {
 		var testId = 'toggler-checkbox';
 		show();

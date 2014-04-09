@@ -10,7 +10,7 @@ QUnit.moduleDone(function( details ) {
 var testConfig = {
 
 	// run all tests
-	runAll: true,
+	runAll: false,
 	
 	// run individual tests
 	run: {
@@ -31,10 +31,14 @@ var testConfig = {
 			parents: false
 		},
 		
-		grouptoggler: true,
+		grouptoggler: false,
 		
 		switcher: false,
 		
-		sizer: false
+		sizer: false,
+		
+		styler: true,
+		
+		morpher: true
 	}
 }

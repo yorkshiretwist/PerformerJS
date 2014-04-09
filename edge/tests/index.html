@@ -11,6 +11,7 @@
 	.test.passed { border-left-color: #C6E746; color: #ccc; }
 	.test.failed { border-left-color: #EE5757; }
 	.box { border: 1px solid #ccc; padding: 1em; }
+	.highlight { background: #F3FC4E; }
   </style>
 </head>
 <body>
@@ -50,6 +51,21 @@
 			<h2>Target by class parameter</h2>
 			<p><a href="#" class="toggler targetEl-toggler-class-param-target">Toggle</a></p>
 			<p class="hider" id="toggler-class-param-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-button">
+			<h2>Toggle by button</h2>
+			<p><button type="button" class="toggler" data-target="#toggler-button-target">Toggle</button></p>
+			<p class="hider" id="toggler-button-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-input-button">
+			<h2>Toggle by input[button]</h2>
+			<p><input type="button" class="toggler" data-target="#toggler-input-button-target" value="Toggle" /></p>
+			<p class="hider" id="toggler-input-button-target">Toggled content</p>
+		</div>
+		<div class="test" id="toggler-input-submit">
+			<h2>Toggle by input[submit]</h2>
+			<p><input type="submit" class="toggler" data-target="#toggler-input-submit-target" value="Toggle" /></p>
+			<p class="hider" id="toggler-input-submit-target">Toggled content</p>
 		</div>
 		<div class="test" id="toggler-checkbox">
 			<h2>Toggle by checkbox</h2>
@@ -199,6 +215,86 @@
 			<p id="sizer-id-height-width-target" class="box">Target</p>
 		</div>
 	</div>
+	
+	<div class="module" id="Styler">
+		<h1>Styler</h1>
+		<div class="test" id="styler-id">
+			<h2>Target by ID</h2>
+			<p><a href="#" class="styler" data-target="#styler-id-target" data-style="highlight">Style</a></p>
+			<p id="styler-id-target">Target</p>
+		</div>
+		<div class="test" id="styler-class">
+			<h2>Target by class</h2>
+			<p><a href="#" class="styler" data-target=".styler-class-target" data-style="highlight">Style</a></p>
+			<p class="styler-class-target">Target</p>
+		</div>
+		<div class="test" id="styler-class-param">
+			<h2>Target by class</h2>
+			<p><a href="#" class="styler targetEl-styler-class-param-target style-highlight">Style</a></p>
+			<p id="styler-class-param-target">Target</p>
+		</div>
+		<div class="test" id="styler-id-delay">
+			<h2>Target by ID with delay</h2>
+			<p><a href="#" class="styler" data-target="#styler-id-delay-target" data-style="highlight" data-delay="2">Style</a></p>
+			<p id="styler-id-delay-target">Target</p>
+		</div>
+		<div class="test" id="styler-class-param-delay">
+			<h2>Target by class with delay</h2>
+			<p><a href="#" class="styler targetEl-styler-class-param-delay-target style-highlight delay-2">Style</a></p>
+			<p id="styler-class-param-delay-target">Target</p>
+		</div>
+		<div class="test" id="styler-button">
+			<h2>Style by button[button]</h2>
+			<p><button type="button" class="styler" data-target="#styler-button-target" data-style="highlight">Style</button></p>
+			<p id="styler-button-target">Target</p>
+		</div>
+		<div class="test" id="styler-submit">
+			<h2>Style by button[submit]</h2>
+			<p><button type="submit" class="styler" data-target="#styler-submit-target" data-style="highlight">Style</button></p>
+			<p id="styler-submit-target">Target</p>
+		</div>
+		<div class="test" id="styler-input">
+			<h2>Style by input[button]</h2>
+			<p><input type="button" class="styler" data-target="#styler-input-target" data-style="highlight" value="Style" /></p>
+			<p id="styler-input-target">Target</p>
+		</div>
+		<div class="test" id="styler-input-submit">
+			<h2>Style by input[submit]</h2>
+			<p><input type="submit" class="styler" data-target="#styler-input-submit-target" data-style="highlight" value="Style" /></p>
+			<p id="styler-input-submit-target">Target</p>
+		</div>
+		<div class="test" id="styler-checkbox">
+			<h2>Style by checkbox</h2>
+			<p><input type="checkbox" class="styler" data-target="#styler-checkbox-target" data-style="highlight" /></p>
+			<p id="styler-checkbox-target">Target</p>
+		</div>
+		<div class="test" id="styler-checkbox-checked">
+			<h2>Style by checkbox (checked)</h2>
+			<p><input type="checkbox" checked="checked" class="styler" data-target="#styler-checkbox-checked-target" data-style="highlight" /></p>
+			<p id="styler-checkbox-checked-target">Target</p>
+		</div>
+		<div class="test" id="styler-select">
+			<h2>Style by select list option</h2>
+			<p>
+				<select class="styler" data-style="highlight">
+					<option>Please select...</option>
+					<option data-target="#styler-select-target1">Option 1</option>
+					<option data-target="#styler-select-target2">Option 2</option>
+					<option data-target="#styler-select-target3">Option 3</option>
+				</select>
+			</p>
+			<p id="styler-select-target1">You chose option 1</p>
+			<p id="styler-select-target2">You chose option 2</p>
+			<p id="styler-select-target3">You chose option 3</p>
+		</div>
+		<div class="test" id="styler-radio">
+			<h2>Style by radio option</h2>
+			<p><input type="radio" name="styler-radio" id="styler-radio-option1" class="styler" data-target="#styler-radio-target1" data-style="highlight" /> Option 1</p>
+			<p><input type="radio" name="styler-radio" id="styler-radio-option2" class="styler" data-target="#styler-radio-target2" data-style="highlight" /> Option 2</p>
+			<p id="styler-radio-target1">You chose option 1</p>
+			<p id="styler-radio-target2">You chose option 2</p>
+		</div>
+	</div>
 
 	<script src="jquery-1.11.0.js"></script>
 	<script src="performer.js"></script>
@@ -211,5 +307,6 @@
 	<script src="grouptoggler.tests.js"></script>
 	<script src="switcher.tests.js"></script>
 	<script src="sizer.tests.js"></script>
+	<script src="styler.tests.js"></script>
 </body>
 </html>

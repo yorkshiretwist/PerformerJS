@@ -180,6 +180,10 @@ This work is released under any of the following licenses, please choose the one
 		
 		// sizer
 		self.body.on( 'click keypress', '.sizer', self.size );
+		
+		// styler
+		self.body.on( 'click keypress', "a.styler,button.styler,input[type='button'].styler,input[type='submit'].styler", self.style );
+		self.body.on( 'change', "input[type='checkbox'].styler,input[type='radio'].styler,select.styler", self.style );
 	},
 	
 	// toggle an elements visibility
@@ -221,6 +225,12 @@ This work is released under any of the following licenses, please choose the one
 			return true;
 		}
 		
+		// get the target element(s)
+		var targetEl = $( target );
+		if ( ! targetEl.length ) {
+			return true;
+		}
+		
 		// get the show and hide effects
 		var showeffect = el.dataVar( 'showeffect', 'slidedown' );
 		var hideeffect = el.dataVar( 'hideeffect', 'slideup' );
@@ -231,12 +241,6 @@ This work is released under any of the following licenses, please choose the one
 		
 		// get the delay for the toggling
 		var delay = el.dataVar( 'delay', 0 ) * 1000;
-		
-		// get the target element(s)
-		var targetEl = $( target );
-		if ( ! targetEl.length ) {
-			return true;
-		}
 		
 		// toggle the visibility of the target element(s)
 		var elementShown = false;
@@ -368,6 +372,91 @@ This work is released under any of the following licenses, please choose the one
 		return self.stopEvent( e );
 	},
 	
+	// apply a class to element(s)
+	style: function( e ) {
+		var el = self.$( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		// get the class name
+		var className = el.dataVar( 'style', false );
+		
+		// get the target
+		var target = self.getTarget( el );
+		
+		// if the element is a select list we hide the targets for all options
+		// then show the target for the currently select option
+		if ( el.prop( 'tagName' ) === 'SELECT' ) {
+			// remove the class all the targets for all options
+			self.removeClassFromTargets( el.find( 'option' ), className );
+			var option = el.find( ':selected' );
+			var optionTarget = self.getTarget( option );
+			// if the option target is not set then use the target on the select list
+			if ( optionTarget ) {
+			    target = optionTarget;
+			}
+		}
+		
+		// check a target has been given
+		if ( ! target ) {
+			return true;
+		}
+		
+		// if no class name has been specified we return
+		if ( ! className ) {
+		    return true;
+		}
+		
+		// get the target element(s)
+		var targetEl = $( target );
+		if ( ! targetEl.length ) {
+			return true;
+		}
+		
+		// get the delay for the toggling
+		var delay = el.dataVar( 'delay', 0 ) * 1000;
+		
+		// don't allow the class to be unstyled by default
+		var unstyle = false;
+		
+		// see if the source element is a checkbox and if the target
+		// element already has the class, in which case we want to remove it
+		if ( el.prop( 'tagName' ) === 'INPUT' 
+			&& el.attr( 'type' ) === 'checkbox'
+			&& targetEl.hasClass( className ) ) {
+			unstyle = true;
+		}
+		
+		// if we can unstyle the element, for example when a checkbox is unchecked,
+		// then remove the class instead of adding it
+		if ( unstyle ) {
+		    
+			if ( delay === 0 ) {
+				targetEl.removeClass( className );
+			} else {
+				self.window.setTimeout( function() {
+					targetEl.removeClass( className );
+				}, delay );
+			}
+		
+		// just add the class
+		} else {
+		
+			// add the class to the target element(s)
+			if ( delay === 0 ) {
+				targetEl.addClass( className );
+			} else {
+				self.window.setTimeout( function() {
+					targetEl.addClass( className );
+				}, delay );
+			}
+		}
+		
+		// stop the event propagating
+		return self.stopEvent( e );
+	},
+	
 	// performs a toggle of the given element(s), returning true if the element has been shown and false if it has been hidden
 	doToggle: function( el, showeffect, hideeffect ) {
 		// hide the element(s)
@@ -407,17 +496,17 @@ This work is released under any of the following licenses, please choose the one
 	
 	// gets the target from the given element(s) and hides it
 	hideTargets: function( el ) {
-		if ( ! el.length ) {
-			return;
-		}
-		// get the targets
-		var targets = [];
-		el.each( function( index ) {
-			targets.push( self.getTarget( self.$( this ) ) );
-		});
-		self.$.each( self.$.unique( targets ), function( index, value ) {
+		self.$.each( self.getTargets( el ), function( index, value ) {
 			self.doHide( self.$( value ) );
 		});
+	},
+	
+	// gets the target from the given element(s) and removes the given class name from them
+	removeClassFromTargets: function( el, className ) {
+		var targets = self.getTargets( el );
+		for ( var i = 0; i < targets.length; i++ ) {
+			self.$( targets[i] ).removeClass( className );
+		};
 	},
 	
 	// hides an element, using the optional given effect
@@ -466,15 +555,33 @@ This work is released under any of the following licenses, please choose the one
 	},
 	
 	// get the target element from the given elements data attribute or class parameter
-	getTarget: function( el, compatibilityPrefix = '#' ) {
+	getTarget: function( el, compatibilityPrefix ) {
 		if ( ! el.length ) {
 			return false;
 		}
+		
+		if ( compatibilityPrefix === undefined ) {
+			compatibilityPrefix = '#';
+		}
+		
 		return el.dataVar( [
 			'target', // 2.0+ syntax, using data attributes
 			['targetEl', compatibilityPrefix], // < v2.0 syntax, using class parameters
 			['rel', compatibilityPrefix] // < v2.0 syntax, using the rel attribute
 		], false );
+	},
+		
+	// gets the target from the element(s) in the given collection
+	getTargets: function( el ) {
+		if ( ! el.length ) {
+			return [];
+		}
+		// get the targets
+		var targets = [];
+		el.each( function( index ) {
+			targets.push( self.getTarget( self.$( this ) ) );
+		});
+		return self.$.unique( targets );
 	},
 	
 	// stores enumerations
