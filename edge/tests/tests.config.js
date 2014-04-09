@@ -42,3 +42,27 @@ var testConfig = {
 		morpher: true
 	}
 }
+
+if (!testConfig.runAll) {
+    if (!testConfig.run.hider) {
+        $('.module.hider').hide();
+    }
+    if (!testConfig.run.shower) {
+        $('.module.shower').hide();
+    }
+    if (!testConfig.run.toggler.all) {
+        $('.module.toggler').hide();
+    }
+    if (!testConfig.run.grouptoggler) {
+        $('.module.grouptoggler').hide();
+    }
+    if (!testConfig.run.switcher) {
+        $('.module.switcher').hide();
+    }
+    if (!testConfig.run.sizer) {
+        $('.module.sizer').hide();
+    }
+    if (!testConfig.run.styler) {
+        $('.module.styler').hide();
+    }
+}

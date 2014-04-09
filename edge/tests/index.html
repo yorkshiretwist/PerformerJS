@@ -5,7 +5,7 @@
   <title>Performer Test Suite</title>
   <link rel="stylesheet" href="qunit-1.14.0.css">
   <style type="text/css">
-	#qunit { float: right; width: 60%; }
+	#qunit { position: fixed; right: 10px; top: 10px; width: 60%; background: #fff; }
 	.module { display: block; }
 	.test { border-left: 3px solid #fff; }
 	.test.passed { border-left-color: #C6E746; color: #ccc; }
@@ -19,7 +19,7 @@
 	<div id="qunit"></div>
 	<div id="qunit-fixture"></div>
 	
-	<div class="module" id="Hider">
+	<div class="module hider" id="Hider">
 		<h1>Hider</h1>
 		<div class="test" id="hide">
 			<h2>Hide</h2>
@@ -27,7 +27,7 @@
 		</div>
 	</div>
 	
-	<div class="module" id="Shower">
+	<div class="module shower" id="Shower">
 		<h1>Shower</h1>
 		<div class="test" id="show">
 			<h2>Show</h2>
@@ -35,7 +35,7 @@
 		</div>
 	</div>
 
-	<div class="module" id="Toggler">
+	<div class="module toggler" id="Toggler">
 		<h1>Toggler</h1>
 		<div class="test" id="toggler-id">
 			<h2>Target by ID</h2>
@@ -164,7 +164,7 @@
 		</div>
 	</div>
 	
-	<div class="module" id="GroupToggler">
+	<div class="module grouptoggler" id="GroupToggler">
 		<h1>GroupToggler</h1>
 		<div class="test" id="grouptoggler-class-param">
 			<h2>Target by class parameter</h2>
@@ -180,7 +180,7 @@
 		</div>
 	</div>
 	
-	<div class="module" id="Switcher">
+	<div class="module switcher" id="Switcher">
 		<h1>Switcher</h1>
 		<div class="test" id="switcher-id">
 			<h2>Target by ID</h2>
@@ -202,7 +202,7 @@
 		</div>
 	</div>
 	
-	<div class="module" id="Sizer">
+	<div class="module sizer" id="Sizer">
 		<h1>Sizer</h1>
 		<div class="test" id="sizer-id-height">
 			<h2>Target by ID, height only</h2>
@@ -216,7 +216,7 @@
 		</div>
 	</div>
 	
-	<div class="module" id="Styler">
+	<div class="module styler" id="Styler">
 		<h1>Styler</h1>
 		<div class="test" id="styler-id">
 			<h2>Target by ID</h2>

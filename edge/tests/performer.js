@@ -397,6 +397,13 @@ This work is released under any of the following licenses, please choose the one
 			    target = optionTarget;
 			}
 		}
+        
+        // if the element is a radio button we remove the class for all the targets for all options
+		// then show the target for the currently select option
+		if ( el.prop( 'tagName' ) === 'INPUT' && el.attr( 'type' ) === 'radio' ) {
+			var radioName = el.attr( 'name' );
+			self.removeClassFromTargets( self.$( "input[type='radio'][name='" + radioName + "']" ), className );
+		}
 		
 		// check a target has been given
 		if ( ! target ) {

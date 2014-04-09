@@ -103,4 +103,17 @@ if ( testConfig.runAll || testConfig.run.styler ) {
 			
 		ok( ! $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has had class removed' );
 	});
+    
+    test( "Style by radio option", function() {
+        var testId = 'styler-radio';
+        
+        $( '#' + testId + '-option1' ).click();
+        
+        ok( $( '#' + testId + '-target1' ).hasClass( 'highlight' ), 'Target 1 has class' );
+        
+        $( '#' + testId + '-option2' ).click();
+        
+        ok( ! $( '#' + testId + '-target1' ).hasClass( 'highlight' ), 'Target 1 has had class removed' );
+        ok( $( '#' + testId + '-target2' ).hasClass( 'highlight' ), 'Target 2 has class' );
+    });
 }
