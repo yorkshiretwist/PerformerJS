@@ -37,9 +37,11 @@ var testConfig = {
 		
 		sizer: false,
 		
-		styler: true,
+		styler: false,
 		
-		morpher: true
+		morpher: false,
+        
+        tabber: true
 	}
 }
 
@@ -64,5 +66,8 @@ if (!testConfig.runAll) {
     }
     if (!testConfig.run.styler) {
         $('.module.styler').hide();
+    }
+    if (!testConfig.run.morpher) {
+        $('.module.morpher').hide();
     }
 }

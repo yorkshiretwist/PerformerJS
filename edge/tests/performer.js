@@ -184,6 +184,10 @@ This work is released under any of the following licenses, please choose the one
 		// styler
 		self.body.on( 'click keypress', "a.styler,button.styler,input[type='button'].styler,input[type='submit'].styler", self.style );
 		self.body.on( 'change', "input[type='checkbox'].styler,input[type='radio'].styler,select.styler", self.style );
+        
+        // tabber
+        self.body.on( 'click keypress', "a.tabber,button.tabber,input[type='button'].tabber,input[type='submit'].tabber", self.tab );
+        self.body.on( 'change', "input[type='checkbox'].tabber,input[type='radio'].tabber,select.tabber", self.tab );
 	},
 	
 	// toggle an elements visibility
@@ -464,6 +468,71 @@ This work is released under any of the following licenses, please choose the one
 		return self.stopEvent( e );
 	},
 	
+    // show a tab in a tab group
+	tab: function( e ) {
+		var el = self.$( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		// get the target tab group
+		var tabGroup = el.dataVar( [
+			'target', // 2.0+ syntax, using data attributes
+			['tabGroup', '#'] // < v2.0 syntax, using class parameters
+		], false );
+        var targetTab = false;
+		
+		// if the element is a select list or radio buttons we hide all tabs in the group
+		// then show the tab for the currently select option
+		if ( el.prop( 'tagName' ) === 'SELECT' || ( el.prop( 'tagName' ) === 'INPUT' && el.attr( 'type' ) === 'radio' ) ) {
+			var option = el.find( ':selected' );
+			var optionTargetTab = el.dataVar( [
+                'tab', // 2.0+ syntax, using data attributes
+                ['tab', '#'] // < v2.0 syntax, using class parameters
+            ], false );
+			if ( optionTargetTab ) {
+                targetTab = optionTargetTab;
+            }
+		}
+		
+		// check a target has been given
+		if ( ! tabGroup || ! targetTab ) {
+			return true;
+		}
+		
+		// get the target element(s)
+		var targetEl = $( target ),
+            targetTabEl = $( targetTab );
+		if ( ! targetEl.length ) {
+			return true;
+		}
+        
+        // get the tabs in the tab group
+        var tabs = $( '.tab', targetEl );
+		
+        // no tabs? then there's nothing we can do
+        if ( ! tabs.length ) {
+            return true;
+        }
+        
+		// get the delay
+		var delay = el.dataVar( 'delay', 0 ) * 1000;
+
+        // toggle the tabs
+        if ( delay === 0 ) {
+			self.doHide( tabs );
+            self.doShow( targetTab );
+        } else {
+            self.window.setTimeout( function() {
+                self.doHide( tabs );
+                self.doShow( targetTab );
+            }, delay );
+        }
+		
+		// stop the event propagating
+		return self.stopEvent( e );
+	},
+        
 	// performs a toggle of the given element(s), returning true if the element has been shown and false if it has been hidden
 	doToggle: function( el, showeffect, hideeffect ) {
 		// hide the element(s)

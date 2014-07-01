@@ -229,7 +229,7 @@
 			<p class="styler-class-target">Target</p>
 		</div>
 		<div class="test" id="styler-class-param">
-			<h2>Target by class</h2>
+			<h2>Target by class parameter</h2>
 			<p><a href="#" class="styler targetEl-styler-class-param-target style-highlight">Style</a></p>
 			<p id="styler-class-param-target">Target</p>
 		</div>
@@ -295,6 +295,43 @@
 			<p id="styler-radio-target2">You chose option 2</p>
 		</div>
 	</div>
+    
+    <div class="module morpher" id="Morpher">
+		<h1>Morpher</h1>
+		<div class="test" id="styler-id">
+			<h2>Target by ID</h2>
+			<p><a href="#" class="styler" data-target="#styler-id-target" data-style="highlight">Style</a></p>
+			<p id="styler-id-target">Target</p>
+		</div>
+    </div>
+    
+    <div class="module tabber" id="Tabber">
+		<h1>Tabber</h1>
+        
+        <div id="tabs" class="tabs">
+            <p id="tab1" class="tab tab1">This is tab 1</p>
+            <p id="tab2" class="tab tab2 hider">This is tab 2</p>
+            <p id="tab3" class="tab tab3 hider">This is tab 3</p>
+        </div>
+        
+		<div class="test" id="tabber-id">
+			<h2>Target by ID</h2>
+			<p><a href="#" id="tabber-id-tab2" class="tabber" data-target="#tabs" data-tab="#tab2">Show tab 2</a></p>
+            <p><a href="#" id="tabber-id-tab1" class="tabber" data-target="#tabs" data-tab="#tab1">Show tab 1</a></p>
+		</div>
+        
+        <div class="test" id="tabber-class">
+			<h2>Target by class</h2>
+			<p><a href="#" id="tabber-class-tab3" class="tabber" data-target=".tabs" data-tab=".tab3">Show tab 3</a></p>
+            <p><a href="#" id="tabber-class-tab1" class="tabber" data-target=".tabs" data-tab=".tab1">Show tab 1</a></p>
+		</div>
+        
+        <div class="test" id="tabber-class-param">
+			<h2>Target by class parameter</h2>
+			<p><a href="#" id="tabber-class-param-tab3" class="tabber tabGroup-tabs tab-tab3">Show tab 3</a></p>
+            <p><a href="#" id="tabber-class-param-tab1" class="tabber tabGroup-tabs tab-tab1">Show tab 1</a></p>
+		</div>
+    </div>
 
 	<script src="jquery-1.11.0.js"></script>
 	<script src="performer.js"></script>
@@ -308,5 +345,7 @@
 	<script src="switcher.tests.js"></script>
 	<script src="sizer.tests.js"></script>
 	<script src="styler.tests.js"></script>
+    <script src="morpher.tests.js"></script>
+    <script src="tabber.tests.js"></script>
 </body>
 </html>
