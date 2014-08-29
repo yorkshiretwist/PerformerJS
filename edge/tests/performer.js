@@ -16,9 +16,6 @@ This work is released under any of the following licenses, please choose the one
 'use strict';
 
 	var
-
-	// a reference to this
-	self = undefined,
 	
 	// the version of Performer
     version = '2.0.0',
@@ -60,7 +57,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// a function that will be run when an action completes
 	// this is used to assist unit testing
-	callback: undefined,
+	callback = undefined,
 	
 	// ========================================================================================
 	// Initialisation methods
@@ -68,41 +65,38 @@ This work is released under any of the following licenses, please choose the one
 	// initialise Performer
 	init = function() {
 		
-		// set up the reference to this
-		self = this;
-		
 		// reset the callback to an empty function
-		self.resetCallback();
+		resetCallback();
 		
 		// initialise properties
-		self.initialisationError = self.enums.initialisationError.None;
+		initialisationError = enums.initialisationError.None;
 		
 		// check the jQuery version
 		if ( ! checkjQueryVersion()) {
-			self.initialisationError = self.enums.initialisationError.jQueryTooOld;
-			self.debugError( 'Initialisation error: ' + self.initialisationError );
+			initialisationError = enums.initialisationError.jQueryTooOld;
+			debugError( 'Initialisation error: ' + initialisationError );
 			return;
 		}
 		
 		// add the CSS classes
-		self.addStyles();
+		addStyles();
 		
 		// attach transformers, which perform actions on page load
 		try {
-			self.attachTransformers();
+			attachTransformers();
 		} catch ( ex ) {
-			self.debugException( ex );
+			debugException( ex );
 		}
 		
 		// attach listeners, which respond to events on the page
 		try {
-			self.attachListeners();
+			attachListeners();
 		} catch ( ex ) {
-			self.debugException( ex );
+			debugException( ex );
 		}
 		
 		// set Performer as being initialised
-		self.isInitialised = true;
+		isInitialised = true;
 	},
 	
 	// checks the version of jQuery to ensure it is new enough
@@ -124,7 +118,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// display an exception if Performer is in debug mode
 	debugException = function( ex ) {
-		if ( ! self.isDebugging ) {
+		if ( ! isDebugging ) {
 			return;
 		}
 		console.exception ? console.exception( message ) : console.log( ex );
@@ -132,7 +126,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// display an error message if Performer is in debug mode
 	debugError = function( message ) {
-		if ( ! self.isDebugging ) {
+		if ( ! isDebugging ) {
 			return;
 		}
 		console.error ? console.error( message ) : console.log( message );
@@ -140,7 +134,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// display a warning message if Performer is in debug mode
 	debugWarning = function( message ) {
-		if ( ! self.isDebugging ) {
+		if ( ! isDebugging ) {
 			return;
 		}
 		console.warn ? console.warn( message ) : console.log( message );
@@ -148,7 +142,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// display an informational message if Performer is in debug mode
 	debugInfo = function( message ) {
-		if ( ! self.isDebugging ) {
+		if ( ! isDebugging ) {
 			return;
 		}
 		console.info ? console.info( message ) : console.log( message );
@@ -156,7 +150,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// display an error message if Performer is in debug mode
 	debug = function( message ) {
-		if ( ! self.isDebugging ) {
+		if ( ! isDebugging ) {
 			return;
 		}
 		console.log( message );
@@ -174,38 +168,38 @@ This work is released under any of the following licenses, please choose the one
 	attachTransformers = function() {
 	
 		// hider
-		$( '.' + self.defaults.hideClass, self.body ).each( function() {
-			self.doHide( $( this ) );
+		$( '.' + defaults.hideClass, body ).each( function() {
+			doHide( $( this ) );
 		});
 		
 		// shower
-		$( '.' + self.defaults.showClass, self.body ).each( function() {
-			self.doShow( $( this ) );
+		$( '.' + defaults.showClass, body ).each( function() {
+			doShow( $( this ) );
 		});
 		
 		// truncator
-		$( '.truncator', self.body ).each( function() {
-			self.truncate( $( this ) );
+		$( '.truncator', body ).each( function() {
+			truncate( $( this ) );
 		});
 		
 		// looper
-		$( '.looper', self.body ).each( function(){
-			self.initLooper( $( this ) );
+		$( '.looper', body ).each( function(){
+			initLooper( $( this ) );
 		});
 		
 		// pager
-		$( '.pager', self.body ).each( function(){
-			self.initPager( $( this ) );
+		$( '.pager', body ).each( function(){
+			initPager( $( this ) );
 		});
 		
 		// focusser
-		$( '.focusser', self.body ).each( function(){
-			self.focus( $( this ) );
+		$( '.focusser', body ).each( function(){
+			focus( $( this ) );
 		});
 		
 		// submitlocker
-		$( 'form.submitlocker', self.body ).each( function(){
-			self.submitlocker( $( this ) );
+		$( 'form.submitlocker', body ).each( function(){
+			submitlocker( $( this ) );
 		});
 	},
 	
@@ -213,44 +207,44 @@ This work is released under any of the following licenses, please choose the one
 	attachListeners = function() {
 	
 		// toggler
-		self.body.on( 'click keypress', "a.toggler,form button.toggler,form input[type='button'].toggler,form input[type='submit'].toggler", self.toggle );
-		self.body.on( 'change', "form input[type='checkbox'].toggler,form input[type='radio'].toggler,form select.toggler", self.toggle );
+		body.on( 'click keypress', "a.toggler,form button.toggler,form input[type='button'].toggler,form input[type='submit'].toggler", toggle );
+		body.on( 'change', "form input[type='checkbox'].toggler,form input[type='radio'].toggler,form select.toggler", toggle );
 		
 		// group toggler: for backwards compatibility with Performer syntax < v2.0
-		self.body.on( 'click keypress', '.grouptoggler', self.toggle );
+		body.on( 'click keypress', '.grouptoggler', toggle );
 		
 		// switcher
-		self.body.on( 'click keypress', '.switcher', self.switcher );
+		body.on( 'click keypress', '.switcher', switcher );
 		
 		// sizer
-		self.body.on( 'click keypress', '.sizer', self.size );
+		body.on( 'click keypress', '.sizer', size );
 		
 		// styler
-		self.body.on( 'click keypress', "a.styler,form button.styler,form input[type='button'].styler,form input[type='submit'].styler", self.style );
-		self.body.on( 'change', "form input[type='checkbox'].styler,form input[type='radio'].styler,form select.styler", self.style );
+		body.on( 'click keypress', "a.styler,form button.styler,form input[type='button'].styler,form input[type='submit'].styler", style );
+		body.on( 'change', "form input[type='checkbox'].styler,form input[type='radio'].styler,form select.styler", style );
         
         // tabber
-        self.body.on( 'click keypress', "a.tabber,form button.tabber,form input[type='button'].tabber,form input[type='submit'].tabber", self.tab );
-        self.body.on( 'change', "form input[type='checkbox'].tabber,form input[type='radio'].tabber,form select.tabber", self.tab );
+        body.on( 'click keypress', "a.tabber,form button.tabber,form input[type='button'].tabber,form input[type='submit'].tabber", tab );
+        body.on( 'change', "form input[type='checkbox'].tabber,form input[type='radio'].tabber,form select.tabber", tab );
 		
 		// accordianer
-        self.body.on( 'click keypress', "a.accordianer,form button.accordianer,form input[type='button'].accordianer,form input[type='submit'].accordianer", self.accordian );
-        self.body.on( 'change', "form input[type='checkbox'].accordianer,form input[type='radio'].accordianer,form select.accordianer", self.accordian );
+        body.on( 'click keypress', "a.accordianer,form button.accordianer,form input[type='button'].accordianer,form input[type='submit'].accordianer", accordian );
+        body.on( 'change', "form input[type='checkbox'].accordianer,form input[type='radio'].accordianer,form select.accordianer", accordian );
 		
 		// looper
-        self.body.on( 'click keypress', "a.looperforward,form button.looperforward,form input[type='button'].looperforward,form input[type='submit'].looperforward", self.loop );
-		self.body.on( 'click keypress', "a.looperback,form button.looperback,form input[type='button'].looperback,form input[type='submit'].looperback", self.loop );
-		self.body.on( 'click keypress', "a.looperfirst,form button.looperfirst,form input[type='button'].looperfirst,form input[type='submit'].looperfirst", self.loop );
-		self.body.on( 'click keypress', "a.looperlast,form button.looperlast,form input[type='button'].looperlast,form input[type='submit'].looperlast", self.loop );
-		self.body.on( 'click keypress', "a.looperitem,form button.looperitem,form input[type='button'].looperitem,form input[type='submit'].looperitem", self.loop );
-		self.body.on( 'click keypress', "a.looperitem,form button.looperitem,form input[type='button'].looperitem,form input[type='submit'].looperitem", self.loop );
-		self.body.on( 'click keypress', "a.looperpause,form button.looperpause,form input[type='button'].looperpause,form input[type='submit'].looperpause", self.loop );
-		self.body.on( 'click keypress', "a.looperstop,form button.looperstop,form input[type='button'].looperstop,form input[type='submit'].looperstop", self.loop );
-		self.body.on( 'click keypress', "a.looperplay,form button.looperplay,form input[type='button'].looperplay,form input[type='submit'].looperplay", self.loop );
-		self.body.on( 'click keypress', "a.looperstart,form button.looperstart,form input[type='button'].looperstart,form input[type='submit'].looperstart", self.loop );
+        body.on( 'click keypress', "a.looperforward,form button.looperforward,form input[type='button'].looperforward,form input[type='submit'].looperforward", loop );
+		body.on( 'click keypress', "a.looperback,form button.looperback,form input[type='button'].looperback,form input[type='submit'].looperback", loop );
+		body.on( 'click keypress', "a.looperfirst,form button.looperfirst,form input[type='button'].looperfirst,form input[type='submit'].looperfirst", loop );
+		body.on( 'click keypress', "a.looperlast,form button.looperlast,form input[type='button'].looperlast,form input[type='submit'].looperlast", loop );
+		body.on( 'click keypress', "a.looperitem,form button.looperitem,form input[type='button'].looperitem,form input[type='submit'].looperitem", loop );
+		body.on( 'click keypress', "a.looperitem,form button.looperitem,form input[type='button'].looperitem,form input[type='submit'].looperitem", loop );
+		body.on( 'click keypress', "a.looperpause,form button.looperpause,form input[type='button'].looperpause,form input[type='submit'].looperpause", loop );
+		body.on( 'click keypress', "a.looperstop,form button.looperstop,form input[type='button'].looperstop,form input[type='submit'].looperstop", loop );
+		body.on( 'click keypress', "a.looperplay,form button.looperplay,form input[type='button'].looperplay,form input[type='submit'].looperplay", loop );
+		body.on( 'click keypress', "a.looperstart,form button.looperstart,form input[type='button'].looperstart,form input[type='submit'].looperstart", loop );
 		
 		// pager
-		self.body.on( 'click keypress', '.performer-pagination a', self.page );
+		body.on( 'click keypress', '.performer-pagination a', page );
 	},
 	
 	// ========================================================================================
@@ -271,15 +265,15 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// get the target
-		var target = self.getTarget( el, compatibilityPrefix );
+		var target = getTarget( el, compatibilityPrefix );
 		
 		// if the element is a select list we hide the targets for all options
 		// then show the target for the currently select option
 		if ( el.prop( 'tagName' ) === 'SELECT' ) {
 			// hide all the targets for all options
-			self.hideTargets( el.find( 'option' ) );
+			hideTargets( el.find( 'option' ) );
 			var option = el.find( ':selected' );
-			target = self.getTarget( option );
+			target = getTarget( option );
 		}
 		
 		// if the element is a radio button we hide the targets for all options
@@ -287,7 +281,7 @@ This work is released under any of the following licenses, please choose the one
 		if ( el.prop( 'tagName' ) === 'INPUT' && el.attr( 'type' ) === 'radio' ) {
 			// hide all the targets for all options
 			var radioName = el.attr( 'name' );
-			self.hideTargets( $( "input[type='radio'][name='" + radioName + "']" ) );
+			hideTargets( $( "input[type='radio'][name='" + radioName + "']" ) );
 		}
 		
 		// check a target has been given
@@ -315,10 +309,10 @@ This work is released under any of the following licenses, please choose the one
 		// toggle the visibility of the target element(s)
 		var elementShown = false;
 		if ( delay === 0 ) {
-			elementShown = self.doToggle( targetEl, showeffect, hideeffect );
+			elementShown = doToggle( targetEl, showeffect, hideeffect );
 		} else {
 			window.setTimeout( function() {
-				elementShown = self.doToggle( targetEl, showeffect, hideeffect );
+				elementShown = doToggle( targetEl, showeffect, hideeffect );
 			}, delay );
 		}
 		
@@ -329,7 +323,7 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// stop the event propagating
-		return self.stopEvent( e );
+		return stopEvent( e );
 	},
 	
 	// switch the visibility of two elements
@@ -363,15 +357,15 @@ This work is released under any of the following licenses, please choose the one
 		
 		// switch the elements
 		if ( $( target1 ).is( ':visible' ) ) {
-			self.doHide( $( target1 ) );
-			self.doShow( $( target2 ) );
+			doHide( $( target1 ) );
+			doShow( $( target2 ) );
 		} else {
-			self.doShow( $( target1 ) );
-			self.doHide( $( target2 ) );
+			doShow( $( target1 ) );
+			doHide( $( target2 ) );
 		}
 		
 		// stop the event propagating
-		return self.stopEvent( e );
+		return stopEvent( e );
 	},
 	
 	// resize an element
@@ -382,7 +376,7 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// get the target
-		var target = self.getTarget( el );
+		var target = getTarget( el );
 		if ( ! target ) {
 			return true;
 		}
@@ -439,7 +433,7 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// stop the event propagating
-		return self.stopEvent( e );
+		return stopEvent( e );
 	},
 	
 	// apply a class to element(s)
@@ -453,15 +447,15 @@ This work is released under any of the following licenses, please choose the one
 		var className = el.dataVar( 'style', false );
 		
 		// get the target
-		var target = self.getTarget( el );
+		var target = getTarget( el );
 		
 		// if the element is a select list we hide the targets for all options
 		// then show the target for the currently select option
 		if ( el.prop( 'tagName' ) === 'SELECT' ) {
 			// remove the class all the targets for all options
-			self.removeClassFromTargets( el.find( 'option' ), className );
+			removeClassFromTargets( el.find( 'option' ), className );
 			var option = el.find( ':selected' );
-			var optionTarget = self.getTarget( option );
+			var optionTarget = getTarget( option );
 			// if the option target is not set then use the target on the select list
 			if ( optionTarget ) {
 			    target = optionTarget;
@@ -472,7 +466,7 @@ This work is released under any of the following licenses, please choose the one
 		// then show the target for the currently select option
 		if ( el.prop( 'tagName' ) === 'INPUT' && el.attr( 'type' ) === 'radio' ) {
 			var radioName = el.attr( 'name' );
-			self.removeClassFromTargets( $( "input[type='radio'][name='" + radioName + "']" ), className );
+			removeClassFromTargets( $( "input[type='radio'][name='" + radioName + "']" ), className );
 		}
 		
 		// check a target has been given
@@ -531,15 +525,15 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// stop the event propagating
-		return self.stopEvent( e );
+		return stopEvent( e );
 	},
 	
     // show a tab in a tab group
 	tab = function( e ) {
-		self.doShowOneOfGroup( this, '.tab', 'tabGroup', 'tab' );
+		doShowOneOfGroup( this, '.tab', 'tabGroup', 'tab' );
 		
 		// stop the event propagating
-		return self.stopEvent( e );
+		return stopEvent( e );
 	},
       
 	// truncate the text in an element
@@ -565,10 +559,10 @@ This work is released under any of the following licenses, please choose the one
 		
 	// show an item in an accordian group
 	accordian = function( e ) {
-		self.doShowOneOfGroup( this, '.accordianitem', 'group', 'item', 'slidedown' );
+		doShowOneOfGroup( this, '.accordianitem', 'group', 'item', 'slidedown' );
 		
 		// stop the event propagating
-		return self.stopEvent( e );
+		return stopEvent( e );
 	},
 	
 	// initialise a looper, showing the default (or first) child and starting the animation (if required)
@@ -580,11 +574,11 @@ This work is released under any of the following licenses, please choose the one
 		if ( defaultItem.length == 0 ) {
 			return;
 		}
-		self.doHide( looper.children() );
-		self.doShow( defaultItem );
+		doHide( looper.children() );
+		doShow( defaultItem );
 		var delay = looper.dataVar( 'delay', 0 );
 		if ( delay > 0 ) {
-			self.startLooperAnimation( looper );
+			startLooperAnimation( looper );
 		}
 	},
 	
@@ -602,7 +596,7 @@ This work is released under any of the following licenses, please choose the one
 				newIndex = 0;
 			}
 			looper.data( 'currentitem', newIndex );
-			self.doLoop( looper );
+			doLoop( looper );
 		}, delay * 1000 );
 		looper.data( 'looperanim', animId );
 	},
@@ -615,7 +609,7 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// get the target
-		var target = self.getTarget( el );
+		var target = getTarget( el );
 		if ( ! target ) {
 			return true;
 		}
@@ -652,24 +646,24 @@ This work is released under any of the following licenses, please choose the one
 			window.clearTimeout( targetEl.data( 'looperanim' ) );
 			return;
 		} else if ( el.hasClass( 'looperplay' ) || el.hasClass( 'looperstart' ) ) {
-			self.startLooperAnimation( targetEl );
+			startLooperAnimation( targetEl );
 			return;
 		}
 		
 		targetEl.data( 'currentitem', newIndex );
-		self.doLoop( targetEl );
+		doLoop( targetEl );
 		
 		// stop the event propagating
-		return self.stopEvent( e );
+		return stopEvent( e );
 	},
 	
 	// move a looper to the new item; the index is in the data('currentitem') property
 	doLoop = function( looper ) {
-		var showAndHideEffect = self.getShowAndHideEffects( looper, 'fadein' ),
+		var showAndHideEffect = getShowAndHideEffects( looper, 'fadein' ),
 			newIndex = looper.data( 'currentitem' ),
 			items = looper.children();
 		// do the show and hide
-		self.doShowAndHide( looper, items.eq( newIndex ), items.not( ':eq(' + newIndex + ')' ), showAndHideEffect.showEffect, showAndHideEffect.hideEffect );
+		doShowAndHide( looper, items.eq( newIndex ), items.not( ':eq(' + newIndex + ')' ), showAndHideEffect.showEffect, showAndHideEffect.hideEffect );
 	},
 	
 	// initialises a pager, showing the correct page
@@ -696,8 +690,8 @@ This work is released under any of the following licenses, please choose the one
 			endIndex = startIndex + pagesize;
 			items.slice( startIndex, endIndex ).addClass( 'pageelement page' + x );
 		}
-		self.doShowAndHide( pager, items.filter( '.page' + startpage ), items.not( '.page' + startpage ) );
-		self.buildPagerNavigation( pager, {
+		doShowAndHide( pager, items.filter( '.page' + startpage ), items.not( '.page' + startpage ) );
+		buildPagerNavigation( pager, {
 			id: id,
 			startpage: startpage,
 			selector: selector,
@@ -738,10 +732,10 @@ This work is released under any of the following licenses, please choose the one
 		if ( ! pagerEl.length ) {
 			return;
 		}
-		effects = self.getShowAndHideEffects( pagerList );
+		effects = getShowAndHideEffects( pagerList );
 		elsToHide = $( '.pageelement', pagerEl );
 		elsToShow = $( '.' + page, pagerEl );
-		self.doShowAndHide( el, elsToShow, elsToHide, effects.showEffect, effects.hideEffect );
+		doShowAndHide( el, elsToShow, elsToHide, effects.showEffect, effects.hideEffect );
 	},
 	
 	// focus on the given element
@@ -763,7 +757,7 @@ This work is released under any of the following licenses, please choose the one
 		
 	// shows one of a group of items; used by accordianer and tabber
 	doShowOneOfGroup = function( initiator, itemSelector, groupId, itemId, showEffect ) {
-		var el = self.getElement( initiator );
+		var el = getElement( initiator );
 		
 		if ( ! el.length ) {
 			return true;
@@ -803,7 +797,7 @@ This work is released under any of the following licenses, please choose the one
             return true;
         }
         
-		self.doShowAndHide( el, targetItemEl, items, showEffect );
+		doShowAndHide( el, targetItemEl, items, showEffect );
 	},
 	
 	// shows and hides the given elements
@@ -813,12 +807,12 @@ This work is released under any of the following licenses, please choose the one
 
         // toggle the tabs
         if ( delay === 0 ) {
-			self.doHide( elsToHide, hideeffect );
-            self.doShow( elsToShow, showEffect );
+			doHide( elsToHide, hideeffect );
+            doShow( elsToShow, showEffect );
         } else {
             window.setTimeout( function() {
-                self.doHide( elsToHide, hideeffect );
-                self.doShow( elsToShow, showEffect );
+                doHide( elsToHide, hideeffect );
+                doShow( elsToShow, showEffect );
             }, delay );
         }
 	},
@@ -827,7 +821,7 @@ This work is released under any of the following licenses, please choose the one
 	doToggle = function( el, showeffect, hideeffect ) {
 		// hide the element(s)
 		if ( el.is( ':visible' ) ){
-			self.doHide( el, hideeffect );
+			doHide( el, hideeffect );
 			el.removeClass( defaults.togglerOpenClass );
 			el.addClass( defaults.togglerClosedClass );
 		
@@ -838,7 +832,7 @@ This work is released under any of the following licenses, please choose the one
 			el.parents().show();
 		
 			// show the element itself
-			self.doShow( el, showeffect );
+			doShow( el, showeffect );
 			el.removeClass( defaults.togglerClosedClass );
 			el.addClass( defaults.togglerOpenClass );
 			return true;
@@ -855,8 +849,8 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// toggle the classes
-		el.removeClass( self.defaults.hideClass );
-		el.addClass( self.defaults.showClass );
+		el.removeClass( defaults.hideClass );
+		el.addClass( defaults.showClass );
 		return el;
 	},
 	
@@ -869,20 +863,20 @@ This work is released under any of the following licenses, please choose the one
 		}
 	
 		// try to perform the effect
-		if ( ! self.doEffect( el, effect ) ) {
+		if ( ! doEffect( el, effect ) ) {
 			el.hide();
 		}
 		
 		// toggle the classes
-		el.removeClass( self.defaults.showClass );
-		el.addClass( self.defaults.hideClass );
+		el.removeClass( defaults.showClass );
+		el.addClass( defaults.hideClass );
 		return el;
 	},
 	
 	// gets the target from the given element(s) and hides it
 	hideTargets = function( el ) {
 		$.each( getTargets( el ), function( index, value ) {
-			self.doHide( $( value ) );
+			doHide( $( value ) );
 		});
 	},
 	
@@ -895,16 +889,16 @@ This work is released under any of the following licenses, please choose the one
 			return false;
 		}
 		if ( effect == 'slideup' || effect == 'blindup' ) { 
-			return el.slideUp( "normal", self.callback ); 
+			return el.slideUp( "normal", callback ); 
 		}
 		if ( effect == 'slidedown' || effect == 'blinddown' ) { 
-			return el.slideDown( "normal", self.callback ); 
+			return el.slideDown( "normal", callback ); 
 		}
 		if ( effect == 'fadein' ) { 
-			return el.fadeIn( "normal", self.callback ); 
+			return el.fadeIn( "normal", callback ); 
 		}
 		if ( effect == 'fadeout' ) { 
-			return el.fadeOut( "normal", self.callback ); 
+			return el.fadeOut( "normal", callback ); 
 		}
 		return false;
 	},
@@ -912,8 +906,8 @@ This work is released under any of the following licenses, please choose the one
 	// gets the show and hide effects from the given element
 	getShowAndHideEffects = function( el, defaultShowEffect, defaultHideEffect ) {
 		return {
-			showEffect: el.dataVar( 'showeffect', self.defaultShowEffect ),
-			hideEffect: el.dataVar( 'hideeffect', self.defaultHideEffect )
+			showEffect: el.dataVar( 'showeffect', defaultShowEffect ),
+			hideEffect: el.dataVar( 'hideeffect', defaultHideEffect )
 		};
 	},
 	
@@ -922,7 +916,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// gets the target from the given element(s) and removes the given class name from them
 	removeClassFromTargets = function( el, className ) {
-		var targets = self.getTargets( el );
+		var targets = getTargets( el );
 		for ( var i = 0; i < targets.length; i++ ) {
 			$( targets[i] ).removeClass( className );
 		};
@@ -939,14 +933,14 @@ This work is released under any of the following licenses, please choose the one
 	
 	// runs the callback function, if one is set
 	doCallback = function() {
-		if (typeof self.callback == 'function') {
-			self.callback();
+		if (typeof callback == 'function') {
+			callback();
 		}
 	},
 	
 	// resets the callback function
 	resetCallback = function() {
-		self.callback = function(){};
+		callback = function(){};
 	},
 	
 	// ========================================================================================

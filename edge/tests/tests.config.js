@@ -19,14 +19,14 @@ var testConfig = {
 	
 		focusser: false,
 		
-		submitlocker: true,
+		submitlocker: false,
 	
 		hider: false,
 		
 		shower: false,
 		
 		toggler: {
-			all: false,
+			all: true,
 			general: false,
 			formelements: false,
 			effects: false,
