@@ -1,7 +1,7 @@
 /*
 Performer JavaScript library (http://performerjs.org)
 Created by Chris Taylor (http://www.stillbreathing.co.uk)
-Additional work by kourge and Danny Linkov
+Additional work on version 1 by kourge and Danny Linkov
 Version 2.0.0
 
 This work is released under any of the following licenses, please choose the one you wish to use:
@@ -12,64 +12,77 @@ This work is released under any of the following licenses, please choose the one
 - BSD License (http://www.opensource.org/licenses/bsd-license.php)
 */
 
-;var Performer = {
+;var Performer = (function(window, document, $) {
+'use strict';
 
+	var
+
+	// a reference to this
+	self = undefined,
+	
 	// the version of Performer
-    version: '2.0.0',
+    version = '2.0.0',
 	
 	// whether Performer is in debug mode
-	isDebugging: true,
+	isDebugging = true,
 	
 	// whether Performer is initialised
-	isInitialised: false,
+	isInitialised = false,
 	
 	// the initialisation error, if any
-	initialisationError: 0,
+	initialisationError = 0,
 	
-	// stores the reference to this instance of Performer
-	self: {},
-	
-	// stores the external references
-	jQuery: {},
-	window: {},
-	document: {},
-	$: {},
+	// stores the counter, incremented for unique ids
+	counter = 0,
 	
 	// get the document body
-	body: self.$('body'),
+	body = $('body'),
 	
 	// get the current location hash
-	hash: self.window.location.hash.replace( '#', '' ),
+	hash = window.location.hash.replace( '#', '' ),
 	
 	// the defaults
-	defaults: {
+	defaults = {
 		hideClass: 'hider',
 		showClass: 'shower',
 		togglerOpenClass: 'toggleropen',
 		togglerClosedClass: 'togglerclosed',
 	},
 	
-	// initialise Performer
-	init: function( jQuery, window, document ) {
+	// stores enumerations
+	enums = {
+		// the enumeration of possible initialisation errors
+		initialisationError: {
+			None: 0,
+			jQueryTooOld: 1
+		}
+	},
 	
-		// store the reference to this instance of Performer
+	// a function that will be run when an action completes
+	// this is used to assist unit testing
+	callback: undefined,
+	
+	// ========================================================================================
+	// Initialisation methods
+	
+	// initialise Performer
+	init = function() {
+		
+		// set up the reference to this
 		self = this;
+		
+		// reset the callback to an empty function
+		self.resetCallback();
 		
 		// initialise properties
 		self.initialisationError = self.enums.initialisationError.None;
 		
 		// check the jQuery version
-		if (!self.checkjQueryVersion()) {
+		if ( ! checkjQueryVersion()) {
 			self.initialisationError = self.enums.initialisationError.jQueryTooOld;
 			self.debugError( 'Initialisation error: ' + self.initialisationError );
 			return;
 		}
-		
-		// store the external references
-		self.jQuery = jQuery;
-		self.$ = jQuery;
-		self.window = window;
-		self.document = document;
 		
 		// add the CSS classes
 		self.addStyles();
@@ -93,9 +106,9 @@ This work is released under any of the following licenses, please choose the one
 	},
 	
 	// checks the version of jQuery to ensure it is new enough
-	checkjQueryVersion: function() {
+	checkjQueryVersion = function() {
 		// get the version number
-		var version = jQuery.fn.jquery,
+		var version = $.fn.jquery,
 			parts = version.split( '.' ),
 			majorVersion = parseInt( parts[0] ),
 			minorVersion = parseInt( parts[1] );
@@ -106,93 +119,146 @@ This work is released under any of the following licenses, please choose the one
 		return false;
 	},
 	
+	// ========================================================================================
+	// Debugging methods
+	
 	// display an exception if Performer is in debug mode
-	debugException: function( ex ) {
+	debugException = function( ex ) {
 		if ( ! self.isDebugging ) {
 			return;
 		}
-		console.exception( ex );
+		console.exception ? console.exception( message ) : console.log( ex );
 	},
 	
 	// display an error message if Performer is in debug mode
-	debugError: function( message ) {
+	debugError = function( message ) {
 		if ( ! self.isDebugging ) {
 			return;
 		}
-		console.error( message );
+		console.error ? console.error( message ) : console.log( message );
 	},
 	
 	// display a warning message if Performer is in debug mode
-	debugWarning: function( message ) {
+	debugWarning = function( message ) {
 		if ( ! self.isDebugging ) {
 			return;
 		}
-		console.warn( message );
+		console.warn ? console.warn( message ) : console.log( message );
 	},
 	
 	// display an informational message if Performer is in debug mode
-	debugInfo: function( message ) {
+	debugInfo = function( message ) {
 		if ( ! self.isDebugging ) {
 			return;
 		}
-		console.info( message );
+		console.info ? console.info( message ) : console.log( message );
 	},
 	
 	// display an error message if Performer is in debug mode
-	debug: function( message ) {
+	debug = function( message ) {
 		if ( ! self.isDebugging ) {
 			return;
 		}
 		console.log( message );
 	},
 	
+	// ========================================================================================
+	// Setup methods
+	
 	// add the CSS styles to the document
-	addStyles: function() {
-		self.document.write('<style type="text/css" id="performerstyles">.hider { display: none; }</style>');
+	addStyles = function() {
+		document.write('<style type="text/css" id="performerstyles">.hider { display: none; }</style>');
 	},
 	
 	// attach transformers, which perform actions on page load
-	attachTransformers: function() {
+	attachTransformers = function() {
 	
 		// hider
-		self.$( '.' + self.defaults.hideClass, self.body ).each( function() {
+		$( '.' + self.defaults.hideClass, self.body ).each( function() {
 			self.doHide( $( this ) );
 		});
 		
 		// shower
-		self.$( '.' + self.defaults.showClass, self.body ).each( function() {
+		$( '.' + self.defaults.showClass, self.body ).each( function() {
 			self.doShow( $( this ) );
+		});
+		
+		// truncator
+		$( '.truncator', self.body ).each( function() {
+			self.truncate( $( this ) );
+		});
+		
+		// looper
+		$( '.looper', self.body ).each( function(){
+			self.initLooper( $( this ) );
+		});
+		
+		// pager
+		$( '.pager', self.body ).each( function(){
+			self.initPager( $( this ) );
+		});
+		
+		// focusser
+		$( '.focusser', self.body ).each( function(){
+			self.focus( $( this ) );
+		});
+		
+		// submitlocker
+		$( 'form.submitlocker', self.body ).each( function(){
+			self.submitlocker( $( this ) );
 		});
 	},
 	
 	// attach listeners, which respond to events on the page
-	attachListeners: function() {
+	attachListeners = function() {
 	
 		// toggler
-		self.body.on( 'click keypress', "a.toggler,button.toggler,input[type='button'].toggler,input[type='submit'].toggler", self.toggle );
-		self.body.on( 'change', "input[type='checkbox'].toggler,input[type='radio'].toggler,select.toggler", self.toggle );
+		self.body.on( 'click keypress', "a.toggler,form button.toggler,form input[type='button'].toggler,form input[type='submit'].toggler", self.toggle );
+		self.body.on( 'change', "form input[type='checkbox'].toggler,form input[type='radio'].toggler,form select.toggler", self.toggle );
 		
 		// group toggler: for backwards compatibility with Performer syntax < v2.0
 		self.body.on( 'click keypress', '.grouptoggler', self.toggle );
 		
 		// switcher
-		self.body.on( 'click keypress', '.switcher', self.switch );
+		self.body.on( 'click keypress', '.switcher', self.switcher );
 		
 		// sizer
 		self.body.on( 'click keypress', '.sizer', self.size );
 		
 		// styler
-		self.body.on( 'click keypress', "a.styler,button.styler,input[type='button'].styler,input[type='submit'].styler", self.style );
-		self.body.on( 'change', "input[type='checkbox'].styler,input[type='radio'].styler,select.styler", self.style );
+		self.body.on( 'click keypress', "a.styler,form button.styler,form input[type='button'].styler,form input[type='submit'].styler", self.style );
+		self.body.on( 'change', "form input[type='checkbox'].styler,form input[type='radio'].styler,form select.styler", self.style );
         
         // tabber
-        self.body.on( 'click keypress', "a.tabber,button.tabber,input[type='button'].tabber,input[type='submit'].tabber", self.tab );
-        self.body.on( 'change', "input[type='checkbox'].tabber,input[type='radio'].tabber,select.tabber", self.tab );
+        self.body.on( 'click keypress', "a.tabber,form button.tabber,form input[type='button'].tabber,form input[type='submit'].tabber", self.tab );
+        self.body.on( 'change', "form input[type='checkbox'].tabber,form input[type='radio'].tabber,form select.tabber", self.tab );
+		
+		// accordianer
+        self.body.on( 'click keypress', "a.accordianer,form button.accordianer,form input[type='button'].accordianer,form input[type='submit'].accordianer", self.accordian );
+        self.body.on( 'change', "form input[type='checkbox'].accordianer,form input[type='radio'].accordianer,form select.accordianer", self.accordian );
+		
+		// looper
+        self.body.on( 'click keypress', "a.looperforward,form button.looperforward,form input[type='button'].looperforward,form input[type='submit'].looperforward", self.loop );
+		self.body.on( 'click keypress', "a.looperback,form button.looperback,form input[type='button'].looperback,form input[type='submit'].looperback", self.loop );
+		self.body.on( 'click keypress', "a.looperfirst,form button.looperfirst,form input[type='button'].looperfirst,form input[type='submit'].looperfirst", self.loop );
+		self.body.on( 'click keypress', "a.looperlast,form button.looperlast,form input[type='button'].looperlast,form input[type='submit'].looperlast", self.loop );
+		self.body.on( 'click keypress', "a.looperitem,form button.looperitem,form input[type='button'].looperitem,form input[type='submit'].looperitem", self.loop );
+		self.body.on( 'click keypress', "a.looperitem,form button.looperitem,form input[type='button'].looperitem,form input[type='submit'].looperitem", self.loop );
+		self.body.on( 'click keypress', "a.looperpause,form button.looperpause,form input[type='button'].looperpause,form input[type='submit'].looperpause", self.loop );
+		self.body.on( 'click keypress', "a.looperstop,form button.looperstop,form input[type='button'].looperstop,form input[type='submit'].looperstop", self.loop );
+		self.body.on( 'click keypress', "a.looperplay,form button.looperplay,form input[type='button'].looperplay,form input[type='submit'].looperplay", self.loop );
+		self.body.on( 'click keypress', "a.looperstart,form button.looperstart,form input[type='button'].looperstart,form input[type='submit'].looperstart", self.loop );
+		
+		// pager
+		self.body.on( 'click keypress', '.performer-pagination a', self.page );
 	},
 	
+	// ========================================================================================
+	// Feature methods
+	
 	// toggle an elements visibility
-	toggle: function( e ) {
-		var el = self.$( this );
+	toggle = function( e ) {
+		var el = $( this );
 		if ( !el.length ) {
 			return true;
 		}
@@ -221,7 +287,7 @@ This work is released under any of the following licenses, please choose the one
 		if ( el.prop( 'tagName' ) === 'INPUT' && el.attr( 'type' ) === 'radio' ) {
 			// hide all the targets for all options
 			var radioName = el.attr( 'name' );
-			self.hideTargets( self.$( "input[type='radio'][name='" + radioName + "']" ) );
+			self.hideTargets( $( "input[type='radio'][name='" + radioName + "']" ) );
 		}
 		
 		// check a target has been given
@@ -251,7 +317,7 @@ This work is released under any of the following licenses, please choose the one
 		if ( delay === 0 ) {
 			elementShown = self.doToggle( targetEl, showeffect, hideeffect );
 		} else {
-			self.window.setTimeout( function() {
+			window.setTimeout( function() {
 				elementShown = self.doToggle( targetEl, showeffect, hideeffect );
 			}, delay );
 		}
@@ -259,7 +325,7 @@ This work is released under any of the following licenses, please choose the one
 		// if moving the window is allowed and the element is shown, move to the page anchor in the link href attribute
 		var href = el.attr( "href" );
 		if ( move && elementShown && href !== undefined && href.indexOf( '#' ) !== -1 ) {
-			self.window.location.hash = href.split( '#' )[1];
+			window.location.hash = href.split( '#' )[1];
 		}
 		
 		// stop the event propagating
@@ -267,8 +333,8 @@ This work is released under any of the following licenses, please choose the one
 	},
 	
 	// switch the visibility of two elements
-	switch: function( e ) {
-		var el = self.$( this );
+	switcher = function( e ) {
+		var el = $( this );
 		if ( !el.length ) {
 			return true;
 		}
@@ -296,12 +362,12 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// switch the elements
-		if ( self.$( target1 ).is( ':visible' ) ) {
-			self.doHide( self.$( target1 ) );
-			self.doShow( self.$( target2 ) );
+		if ( $( target1 ).is( ':visible' ) ) {
+			self.doHide( $( target1 ) );
+			self.doShow( $( target2 ) );
 		} else {
-			self.doShow( self.$( target1 ) );
-			self.doHide( self.$( target2 ) );
+			self.doShow( $( target1 ) );
+			self.doHide( $( target2 ) );
 		}
 		
 		// stop the event propagating
@@ -309,7 +375,7 @@ This work is released under any of the following licenses, please choose the one
 	},
 	
 	// resize an element
-	size: function( e ) {
+	size = function( e ) {
 		var el = $(this);
 		if (!el.length) {
 			return true;
@@ -322,7 +388,7 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// get the target element(s)
-		var targetEl = self.$( target );
+		var targetEl = $( target );
 		if ( ! targetEl.length ) {
 			return true;
 		}
@@ -377,8 +443,8 @@ This work is released under any of the following licenses, please choose the one
 	},
 	
 	// apply a class to element(s)
-	style: function( e ) {
-		var el = self.$( this );
+	style = function( e ) {
+		var el = $( this );
 		if ( !el.length ) {
 			return true;
 		}
@@ -406,7 +472,7 @@ This work is released under any of the following licenses, please choose the one
 		// then show the target for the currently select option
 		if ( el.prop( 'tagName' ) === 'INPUT' && el.attr( 'type' ) === 'radio' ) {
 			var radioName = el.attr( 'name' );
-			self.removeClassFromTargets( self.$( "input[type='radio'][name='" + radioName + "']" ), className );
+			self.removeClassFromTargets( $( "input[type='radio'][name='" + radioName + "']" ), className );
 		}
 		
 		// check a target has been given
@@ -446,7 +512,7 @@ This work is released under any of the following licenses, please choose the one
 			if ( delay === 0 ) {
 				targetEl.removeClass( className );
 			} else {
-				self.window.setTimeout( function() {
+				window.setTimeout( function() {
 					targetEl.removeClass( className );
 				}, delay );
 			}
@@ -458,7 +524,7 @@ This work is released under any of the following licenses, please choose the one
 			if ( delay === 0 ) {
 				targetEl.addClass( className );
 			} else {
-				self.window.setTimeout( function() {
+				window.setTimeout( function() {
 					targetEl.addClass( className );
 				}, delay );
 			}
@@ -469,77 +535,301 @@ This work is released under any of the following licenses, please choose the one
 	},
 	
     // show a tab in a tab group
-	tab: function( e ) {
-		var el = self.$( this );
-		if ( !el.length ) {
+	tab = function( e ) {
+		self.doShowOneOfGroup( this, '.tab', 'tabGroup', 'tab' );
+		
+		// stop the event propagating
+		return self.stopEvent( e );
+	},
+      
+	// truncate the text in an element
+	truncate = function( el ) {
+		var limit = el.dataVar( 'limit', 50 ),
+			moreText = el.dataVar( 'moretext', '...more' ),
+			lessText = el.dataVar( 'lesstext', '...less' ),
+			newHtml = '';
+		
+		if (el && limit) {
+            var html = el.html();
+            var length = html.length;
+            if (limit < length) {
+                var id = el.identify();
+				newHtml += '<span id="' + id + '_truncated">' + html.substring(0, limit);
+				newHtml	+= ' <a href="#" class="switcher" data-target1="#' + id + '_truncated" data-target2="#' + id + '_full">' + moreText + '</a></span>';
+				newHtml += '<span class="hider" id="' + id + '_full">' + html;
+				newHtml += ' <a href="#" class="switcher" data-target1="#' + id + '_truncated" data-target2="#' + id + '_full">' + lessText + '</a></span>'
+                el.html(newHtml);
+            }
+        }
+	},
+		
+	// show an item in an accordian group
+	accordian = function( e ) {
+		self.doShowOneOfGroup( this, '.accordianitem', 'group', 'item', 'slidedown' );
+		
+		// stop the event propagating
+		return self.stopEvent( e );
+	},
+	
+	// initialise a looper, showing the default (or first) child and starting the animation (if required)
+	initLooper = function( looper ) {
+		var defaultItem = $( '.looperdefault', looper );
+		if ( defaultItem.length == 0 ) {
+			defaultItem = looper.children( ':eq(0)' );
+		}
+		if ( defaultItem.length == 0 ) {
+			return;
+		}
+		self.doHide( looper.children() );
+		self.doShow( defaultItem );
+		var delay = looper.dataVar( 'delay', 0 );
+		if ( delay > 0 ) {
+			self.startLooperAnimation( looper );
+		}
+	},
+	
+	// starts the animation of the given looper 
+	startLooperAnimation = function( looper ) {
+		var delay = looper.dataVar( 'delay' ),
+			items = looper.children(),
+			currentIndex,
+			newIndex,
+			animId;
+		animId = window.setInterval( function(){
+			currentIndex = items.filter(':visible').index();
+			newIndex = currentIndex + 1;
+			if ( newIndex >= items.length ) {
+				newIndex = 0;
+			}
+			looper.data( 'currentitem', newIndex );
+			self.doLoop( looper );
+		}, delay * 1000 );
+		looper.data( 'looperanim', animId );
+	},
+	
+	// do a looper function
+	loop = function( e ) {
+		var el = $( this );
+		if ( ! el.length ) {
 			return true;
 		}
 		
-		// get the target tab group
-		var tabGroup = el.dataVar( [
-			'target', // 2.0+ syntax, using data attributes
-			['tabGroup', '#'] // < v2.0 syntax, using class parameters
-		], false );
-        var targetTab = false;
-		
-		// if the element is a select list or radio buttons we hide all tabs in the group
-		// then show the tab for the currently select option
-		if ( el.prop( 'tagName' ) === 'SELECT' || ( el.prop( 'tagName' ) === 'INPUT' && el.attr( 'type' ) === 'radio' ) ) {
-			var option = el.find( ':selected' );
-			var optionTargetTab = el.dataVar( [
-                'tab', // 2.0+ syntax, using data attributes
-                ['tab', '#'] // < v2.0 syntax, using class parameters
-            ], false );
-			if ( optionTargetTab ) {
-                targetTab = optionTargetTab;
-            }
+		// get the target
+		var target = self.getTarget( el );
+		if ( ! target ) {
+			return true;
 		}
 		
+		// get the target element(s) and child items
+		var targetEl = $( target );
+		if ( ! targetEl.length ) {
+			return true;
+		}
+		var items = targetEl.children();
+		
+		// get the index of the current item
+		var currentIndex = items.filter(':visible').index();
+		
+		// get the new index to show
+		var newIndex = currentIndex;
+		if ( el.hasClass( 'looperback' ) ) {
+			newIndex--;
+			if ( newIndex < 0 ) {
+				newIndex = items.length - 1;
+			}
+		} else if ( el.hasClass( 'looperforward' ) ) {
+			newIndex++;
+			if ( newIndex >= items.length ) {
+				newIndex = 0;
+			}
+		} else if ( el.hasClass( 'looperfirst' ) ) {
+			newIndex = 0;
+		} else if ( el.hasClass( 'looperlast' ) ) {
+			newIndex = items.length - 1;
+		} else if ( el.hasClass( 'looperitem' ) ) {
+			newIndex = el.dataVar( 'item', '#' );
+		} else if ( el.hasClass( 'looperpause' ) || el.hasClass( 'looperstop' ) ) {
+			window.clearTimeout( targetEl.data( 'looperanim' ) );
+			return;
+		} else if ( el.hasClass( 'looperplay' ) || el.hasClass( 'looperstart' ) ) {
+			self.startLooperAnimation( targetEl );
+			return;
+		}
+		
+		targetEl.data( 'currentitem', newIndex );
+		self.doLoop( targetEl );
+		
+		// stop the event propagating
+		return self.stopEvent( e );
+	},
+	
+	// move a looper to the new item; the index is in the data('currentitem') property
+	doLoop = function( looper ) {
+		var showAndHideEffect = self.getShowAndHideEffects( looper, 'fadein' ),
+			newIndex = looper.data( 'currentitem' ),
+			items = looper.children();
+		// do the show and hide
+		self.doShowAndHide( looper, items.eq( newIndex ), items.not( ':eq(' + newIndex + ')' ), showAndHideEffect.showEffect, showAndHideEffect.hideEffect );
+	},
+	
+	// initialises a pager, showing the correct page
+	initPager = function( pager ) {
+		var id = pager.identify(),
+			startpage = parseInt( pager.dataVar( 'startpage', 1 ) ),
+			selector = pager.dataVar( 'selector' ),
+			pagesize = parseInt( pager.dataVar( 'pagesize' , 10 ) ),
+			items,
+			numPages,
+			startIndex,
+			endIndex;		
+		if ( typeof selector != 'undefined' ) {
+			items = pager.find( selector ).children();
+		} else {
+			items = pager.children();
+		}
+		numPages = Math.ceil( items.length / pagesize );
+		if ( startpage == 'last' ) {
+			startpage = numPages;
+		}
+		for( var x = 1; x <= numPages; x++ ) {
+			startIndex = ( x * pagesize ) - pagesize;
+			endIndex = startIndex + pagesize;
+			items.slice( startIndex, endIndex ).addClass( 'pageelement page' + x );
+		}
+		self.doShowAndHide( pager, items.filter( '.page' + startpage ), items.not( '.page' + startpage ) );
+		self.buildPagerNavigation( pager, {
+			id: id,
+			startpage: startpage,
+			selector: selector,
+			pagesize: pagesize,
+			items: items,
+			numPages: numPages
+		});
+	},
+	
+	// builds the navigation for a pager element
+	buildPagerNavigation = function( pager, options ) {
+		var currentpage = '',
+			menu = '<ul class="performer-pagination" id="' + options.id + '-pagination">',
+			x;
+        for (x = 1; x <= options.numPages; x++) {
+            if (x == options.startpage) {
+				currentpage = ' currentpage'; 
+			}
+            menu += '<li><a href="#' + options.id + '-page' + x + '" class="' + options.id + '-pagerlink pagerlink' + currentpage + '" id="' + options.id + '-page' + x + '">' + x + '</a></li>';
+            currentpage = '';
+        }
+        menu += '</ul>';
+		pager.after(menu);
+	},
+	
+	// shows a page in a pager element
+	page = function( e ) {
+		var el = $( this ),
+			pagerList = el.parents( '.performer-pagination' ),
+			id = pagerList.attr( 'id' ),
+			pagerId = id.replace( '-pagination', '' ),
+			page = el.attr( 'id' ).replace( pagerId + '-', '' ),
+			pagerEl,
+			effects,
+			elsToHide,
+			elsToShow;
+		pagerEl = $( '#' + pagerId);
+		if ( ! pagerEl.length ) {
+			return;
+		}
+		effects = self.getShowAndHideEffects( pagerList );
+		elsToHide = $( '.pageelement', pagerEl );
+		elsToShow = $( '.' + page, pagerEl );
+		self.doShowAndHide( el, elsToShow, elsToHide, effects.showEffect, effects.hideEffect );
+	},
+	
+	// focus on the given element
+	focus = function( el ) {
+		el.focus();
+	},
+	
+	// stops a form being submitted more than once
+	submitlocker = function( el ) {
+		el.on( 'submit', function( e ) {
+			$( "input[type='submit'],button[type='submit']" ).prop( 'disabled', true );
+			e.preventDefault();
+			return false;
+		});
+	},
+	
+	// ========================================================================================
+	// Visibility methods
+		
+	// shows one of a group of items; used by accordianer and tabber
+	doShowOneOfGroup = function( initiator, itemSelector, groupId, itemId, showEffect ) {
+		var el = self.getElement( initiator );
+		
+		if ( ! el.length ) {
+			return true;
+		}
+		
+		// get the target group
+		var group = el.dataVar( [
+			'target',
+			[groupId, '#'] // checks all syntaxes for the group variable
+		], false );
+        var item = el.dataVar( [
+			[itemId, '#'] // checks all syntaxes for the item variable
+		], false );
+		
+		// get the effect
+		showEffect = el.dataVar( [
+			'showeffect'
+		], showEffect );
+		
 		// check a target has been given
-		if ( ! tabGroup || ! targetTab ) {
+		if ( ! group || ! item ) {
 			return true;
 		}
 		
 		// get the target element(s)
-		var targetEl = $( target ),
-            targetTabEl = $( targetTab );
-		if ( ! targetEl.length ) {
+		var targetGroup = $( group ),
+            targetItemEl = $( item );
+		if ( ! targetGroup.length || ! targetItemEl.length ) {
 			return true;
 		}
         
-        // get the tabs in the tab group
-        var tabs = $( '.tab', targetEl );
+        // get the items in the group
+        var items = $( itemSelector, targetGroup );
 		
-        // no tabs? then there's nothing we can do
-        if ( ! tabs.length ) {
+        // no items? then there's nothing we can do
+        if ( ! items.length ) {
             return true;
         }
         
+		self.doShowAndHide( el, targetItemEl, items, showEffect );
+	},
+	
+	// shows and hides the given elements
+	doShowAndHide = function( el, elsToShow, elsToHide, showEffect, hideeffect ) {
 		// get the delay
 		var delay = el.dataVar( 'delay', 0 ) * 1000;
 
         // toggle the tabs
         if ( delay === 0 ) {
-			self.doHide( tabs );
-            self.doShow( targetTab );
+			self.doHide( elsToHide, hideeffect );
+            self.doShow( elsToShow, showEffect );
         } else {
-            self.window.setTimeout( function() {
-                self.doHide( tabs );
-                self.doShow( targetTab );
+            window.setTimeout( function() {
+                self.doHide( elsToHide, hideeffect );
+                self.doShow( elsToShow, showEffect );
             }, delay );
         }
-		
-		// stop the event propagating
-		return self.stopEvent( e );
 	},
-        
+		
 	// performs a toggle of the given element(s), returning true if the element has been shown and false if it has been hidden
-	doToggle: function( el, showeffect, hideeffect ) {
+	doToggle = function( el, showeffect, hideeffect ) {
 		// hide the element(s)
 		if ( el.is( ':visible' ) ){
 			self.doHide( el, hideeffect );
-			el.removeClass( self.defaults.togglerOpenClass );
-			el.addClass( self.defaults.togglerClosedClass );
+			el.removeClass( defaults.togglerOpenClass );
+			el.addClass( defaults.togglerClosedClass );
 		
 		// show the element(s)
 		} else {
@@ -549,18 +839,18 @@ This work is released under any of the following licenses, please choose the one
 		
 			// show the element itself
 			self.doShow( el, showeffect );
-			el.removeClass( self.defaults.togglerClosedClass );
-			el.addClass( self.defaults.togglerOpenClass );
+			el.removeClass( defaults.togglerClosedClass );
+			el.addClass( defaults.togglerOpenClass );
 			return true;
 		}
 		return false;
 	},
 	
 	// shows an element, using the optional given effect
-	doShow: function( el, effect ) {
+	doShow = function( el, effect ) {
 	
 		// try to perform the effect
-		if ( ! self.doEffect( el, effect ) ) {
+		if ( ! doEffect( el, effect ) ) {
 			el.show();
 		}
 		
@@ -570,26 +860,11 @@ This work is released under any of the following licenses, please choose the one
 		return el;
 	},
 	
-	// gets the target from the given element(s) and hides it
-	hideTargets: function( el ) {
-		self.$.each( self.getTargets( el ), function( index, value ) {
-			self.doHide( self.$( value ) );
-		});
-	},
-	
-	// gets the target from the given element(s) and removes the given class name from them
-	removeClassFromTargets: function( el, className ) {
-		var targets = self.getTargets( el );
-		for ( var i = 0; i < targets.length; i++ ) {
-			self.$( targets[i] ).removeClass( className );
-		};
-	},
-	
 	// hides an element, using the optional given effect
-	doHide: function( el, effect ) {
+	doHide = function( el, effect ) {
 	
 		// if the element is the one currently targeted with the hash then don't hide it
-		if ( el.attr( 'id' ) !== undefined && el.attr( 'id' ) == self.hash ) {
+		if ( el.attr( 'id' ) !== undefined && el.attr( 'id' ) == hash ) {
 			return;
 		}
 	
@@ -604,34 +879,106 @@ This work is released under any of the following licenses, please choose the one
 		return el;
 	},
 	
+	// gets the target from the given element(s) and hides it
+	hideTargets = function( el ) {
+		$.each( getTargets( el ), function( index, value ) {
+			self.doHide( $( value ) );
+		});
+	},
+	
+	// ========================================================================================
+	// Effect methods
+	
 	// triggers an effect on the given element
-	doEffect: function( el, effect ) {
+	doEffect = function( el, effect ) {
 		if ( effect === undefined ) {
 			return false;
 		}
 		if ( effect == 'slideup' || effect == 'blindup' ) { 
-			return el.slideUp( "normal" ); 
+			return el.slideUp( "normal", self.callback ); 
 		}
 		if ( effect == 'slidedown' || effect == 'blinddown' ) { 
-			return el.slideDown( "normal" ); 
+			return el.slideDown( "normal", self.callback ); 
 		}
 		if ( effect == 'fadein' ) { 
-			return el.fadeIn( "normal" ); 
+			return el.fadeIn( "normal", self.callback ); 
 		}
 		if ( effect == 'fadeout' ) { 
-			return el.fadeOut( "normal" ); 
+			return el.fadeOut( "normal", self.callback ); 
 		}
 		return false;
 	},
 	
+	// gets the show and hide effects from the given element
+	getShowAndHideEffects = function( el, defaultShowEffect, defaultHideEffect ) {
+		return {
+			showEffect: el.dataVar( 'showeffect', self.defaultShowEffect ),
+			hideEffect: el.dataVar( 'hideeffect', self.defaultHideEffect )
+		};
+	},
+	
+	// ========================================================================================
+	// CSS class methods
+	
+	// gets the target from the given element(s) and removes the given class name from them
+	removeClassFromTargets = function( el, className ) {
+		var targets = self.getTargets( el );
+		for ( var i = 0; i < targets.length; i++ ) {
+			$( targets[i] ).removeClass( className );
+		};
+	},
+	
+	// ========================================================================================
+	// Event methods
+	
 	// stops the default action of the given event
-	stopEvent: function(e) {
+	stopEvent = function(e) {
 		e.preventDefault;
 		return false;
 	},
 	
+	// runs the callback function, if one is set
+	doCallback = function() {
+		if (typeof self.callback == 'function') {
+			self.callback();
+		}
+	},
+	
+	// resets the callback function
+	resetCallback = function() {
+		self.callback = function(){};
+	},
+	
+	// ========================================================================================
+	// Acquisition methods
+	
+	// gets the element which triggered an event; either $(this) or the selected form element
+	getElement = function( el ) {
+		var result = $( el );
+		if ( !result.length ) {
+			return [];
+		}
+		
+		// if the element is a select list show the tab for the currently select option
+		if ( result.prop( 'tagName' ) === 'SELECT' ) {
+			result = result.find( ':selected' );
+		}
+		// if the element is a radio button show the tab for the currently select option
+		if ( result.prop( 'tagName' ) === 'INPUT' && result.attr( 'type' ) === 'radio' ) {
+			var inputName = result.attr( 'name' ),
+				form = result.parents( 'form' );
+			result = $( "input[name='" + inputName + "']:checked", form );
+		}
+		
+		if ( result.length ) {
+			return result;
+		}
+		
+		return [];
+	},
+	
 	// get the target element from the given elements data attribute or class parameter
-	getTarget: function( el, compatibilityPrefix ) {
+	getTarget = function( el, compatibilityPrefix ) {
 		if ( ! el.length ) {
 			return false;
 		}
@@ -648,28 +995,45 @@ This work is released under any of the following licenses, please choose the one
 	},
 		
 	// gets the target from the element(s) in the given collection
-	getTargets: function( el ) {
+	getTargets = function( el ) {
 		if ( ! el.length ) {
 			return [];
 		}
 		// get the targets
 		var targets = [];
 		el.each( function( index ) {
-			targets.push( self.getTarget( self.$( this ) ) );
+			targets.push( getTarget( $( this ) ) );
 		});
-		return self.$.unique( targets );
-	},
+		return $.unique( targets );
+	};
 	
-	// stores enumerations
-	enums: {
-		// the enumeration of possible initialisation errors
-		initialisationError: {
-			None: 0,
-			jQueryTooOld: 1
-		}
+	return {
+		callback: callback,
+		resetCallback: resetCallback,
+		counter: counter,
+		init: init,
+		isInitialised: isInitialised,
+		initialisationError: initialisationError,
+		enums: enums
 	}
-};
+
+})(window, document, jQuery);
+
+// jQuery functions
 jQuery.fn.extend({
+
+	// get the ID of an element, or create a unique id
+	identify: function(){
+        var el = $(this),
+			id = el.attr('id');
+        if ( ! id || id === '' ) {
+			Performer.counter = Performer.counter + 1;
+            id = 'anonymous_element_' + Performer.counter;
+            el.attr('id', id);
+        }
+        return id;
+	},
+
 	// get a variable from a data attribute or class parameter
 	dataVar: function( paramName, def ) {
 		var val;
@@ -697,11 +1061,9 @@ jQuery.fn.extend({
 		for ( var i = 0, thisParamName; thisParamName = paramName[i]; i++ ) {
 		
 			// see if the variable is defined in a data attribute (v2.0+)
-			if ( typeof thisParamName === 'string' ) {
-				val = this.data( thisParamName );
-				if ( val !== undefined ) {
-					return val;
-				}
+			val = this.getData( thisParamName );
+			if ( val !== undefined ) {
+				return val;
 			}
 			
 			// see if the value is in a class parameter (< v2.0)
@@ -721,6 +1083,15 @@ jQuery.fn.extend({
 		
 		// return the default value
 		return def;
+	},
+	
+	// gets a variable from a data attribute (v2.0+)
+	getData: function( paramName ) {
+		if ( typeof paramName === 'string' ) {
+			return this.data( paramName );
+		} else {
+			return this.data( paramName[0] );
+		}
 	},
 	
 	// gets a variable from a class parameter (< v2.0)
@@ -776,4 +1147,4 @@ jQuery.fn.extend({
 		);
 	}
 });
-Performer.init( jQuery, window, document );
+Performer.init();

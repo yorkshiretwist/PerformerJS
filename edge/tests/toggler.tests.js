@@ -2,30 +2,30 @@ module( "Toggler" );
 
 if ( testConfig.runAll || testConfig.run.toggler.all || testConfig.run.toggler.general ) {
 
-	test( "Target by ID", function() {
+	asyncTest( "Target by ID", function() {
 		var testId = 'toggler-id';
 		show();
 		
 		function show() {
-			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
+			Performer.callback = function(){
+				Performer.resetCallback();
 				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
 				ok( $( '#' + testId + ' #' + testId + '-target' ).hasClass( 'toggleropen' ), 'Toggle target has open class');
 				start();
 				hide();
-			}, 1000);
+			};
+			$( '#' + testId + ' a.toggler' ).click();
 		}
 		
 		function hide() {
-			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
+			Performer.callback = function(){
+				Performer.resetCallback();
 				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
 				ok( ! $( '#' + testId + ' #' + testId + '-target' ).hasClass( 'toggleropen' ), 'Toggle target does not have open class');
 				ok( $( '#' + testId + ' #' + testId + '-target' ).hasClass( 'togglerclosed' ), 'Toggle target has closed class');
 				start();
-			}, 1000);
+			};
+			$( '#' + testId + ' a.toggler' ).click();
 		}
 	});
 

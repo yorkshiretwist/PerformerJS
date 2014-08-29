@@ -7,31 +7,31 @@ if ( testConfig.runAll || testConfig.run.tabber ) {
 		
 		$( '#' + testId + ' a#tabber-id-tab2' ).click();
 		
-		ok( ! $( '#' + testId + ' #tab1' ).is( ':visible' ) );
-        ok( $( '#' + testId + ' #tab2' ).is( ':visible' ) );
-        ok( ! $( '#' + testId + ' #tab3' ).is( ':visible' ) );
+		ok( ! $( '#tabs #tab1' ).is( ':visible' ) );
+        ok( $( '#tabs #tab2' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab3' ).is( ':visible' ) );
            
         $( '#' + testId + ' a#tabber-id-tab1' ).click();
 		
-		ok( $( '#' + testId + ' #tab1' ).is( ':visible' ) );
-        ok( ! $( '#' + testId + ' #tab2' ).is( ':visible' ) );
-        ok( ! $( '#' + testId + ' #tab3' ).is( ':visible' ) );
+		ok( $( '#tabs #tab1' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab2' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab3' ).is( ':visible' ) );
 	});
     
     test( "Target by class", function() {
 		var testId = 'tabber-class';
 		
-		$( '#' + testId + ' a#tabber-id-tab3' ).click();
+		$( '#' + testId + ' a#tabber-class-tab3' ).click();
 		
-		ok( ! $( '#' + testId + ' #tab1' ).is( ':visible' ) );
-        ok( ! $( '#' + testId + ' #tab2' ).is( ':visible' ) );
-        ok( $( '#' + testId + ' #tab3' ).is( ':visible' ) );
+		ok( ! $( '#tabs #tab1' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab2' ).is( ':visible' ) );
+        ok( $( '#tabs #tab3' ).is( ':visible' ) );
            
-        $( '#' + testId + ' a#tabber-id-tab1' ).click();
+        $( '#' + testId + ' a#tabber-class-tab1' ).click();
 		
-		ok( $( '#' + testId + ' #tab1' ).is( ':visible' ) );
-        ok( ! $( '#' + testId + ' #tab2' ).is( ':visible' ) );
-        ok( ! $( '#' + testId + ' #tab3' ).is( ':visible' ) );
+		ok( $( '#tabs #tab1' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab2' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab3' ).is( ':visible' ) );
 	});
         
     test( "Target by class parameter", function() {
@@ -39,14 +39,46 @@ if ( testConfig.runAll || testConfig.run.tabber ) {
 		
 		$( '#' + testId + ' a#tabber-class-param-tab3' ).click();
 		
-		ok( ! $( '#' + testId + ' #tab1' ).is( ':visible' ) );
-        ok( ! $( '#' + testId + ' #tab2' ).is( ':visible' ) );
-        ok( $( '#' + testId + ' #tab3' ).is( ':visible' ) );
+		ok( ! $( '#tabs #tab1' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab2' ).is( ':visible' ) );
+        ok( $( '#tabs #tab3' ).is( ':visible' ) );
            
-        $( '#' + testId + ' a#tabber-iclass-param-tab1' ).click();
+        $( '#' + testId + ' a#tabber-class-param-tab1' ).click();
 		
-		ok( $( '#' + testId + ' #tab1' ).is( ':visible' ) );
-        ok( ! $( '#' + testId + ' #tab2' ).is( ':visible' ) );
-        ok( ! $( '#' + testId + ' #tab3' ).is( ':visible' ) );
+		ok( $( '#tabs #tab1' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab2' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab3' ).is( ':visible' ) );
+	});
+	
+	test( "Target by select", function() {
+		var testId = 'tabber-select';
+		
+		$( '#' + testId + ' #tabber-select-list' ).val( '2' ).change();
+		
+		ok( ! $( '#tabs #tab1' ).is( ':visible' ) );
+        ok( $( '#tabs #tab2' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab3' ).is( ':visible' ) );
+           
+        $( '#' + testId + ' #tabber-select-list' ).val( '3' ).change();
+		
+		ok( ! $( '#tabs #tab1' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab2' ).is( ':visible' ) );
+        ok( $( '#tabs #tab3' ).is( ':visible' ) );
+	});
+	
+	test( "Target by radio button", function() {
+		var testId = 'tabber-radio';
+		
+		$( '#' + testId + ' #tabber-radio-tab2' ).click();
+		
+		ok( ! $( '#tabs #tab1' ).is( ':visible' ) );
+        ok( $( '#tabs #tab2' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab3' ).is( ':visible' ) );
+           
+        $( '#' + testId + ' #tabber-radio-tab1' ).click();
+		
+		ok( $( '#tabs #tab1' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab2' ).is( ':visible' ) );
+        ok( ! $( '#tabs #tab3' ).is( ':visible' ) );
 	});
 }

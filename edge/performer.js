@@ -2,7 +2,7 @@
 Performer JavaScript library (http://performerjs.org)
 Created by Chris Taylor (http://www.stillbreathing.co.uk)
 Additional work by kourge and Danny Linkov
-Version 1.0.3
+Version 1.0.4
 
 This work is released under any of the following licenses, please choose the one you wish to use:
 
@@ -13,12 +13,14 @@ This work is released under any of the following licenses, please choose the one
 */
 var Performer =
 {
-    version: '1.0.3',
+    version: '1.0.4',
     Scriptaculous: false,
     Prototype: false,
     jQuery: false,
     MooTools: false,
     Counter: 0,
+	LooperFuncs: new Array(),
+	LooperCurrentItem: new Array(),
     Performer: function() {
         P.DetectLibrary();
         if (P.Scriptaculous || P.Prototype || P.jQuery || P.MooTools) { P.Start(); }
@@ -48,7 +50,9 @@ var Performer =
             P.TextValue = [];
             P.NewTextValue = [];
             P.Hash = parent.location.hash.replace(new RegExp('^[#]+', 'g'), '');
-            P.Effects = ['slideup', 'slidedown', 'blinddown', 'blindup', 'fadein', 'fadeout'];
+            P.ShowEffects = ['slidedown', 'blinddown', 'fadein'];
+			P.HideEffects = ['slideup', 'blindup', 'fadeout'];
+			P.Effects = P.ShowEffects.concat(P.HideEffects);
             // initialise the app
             P.Init();
         });
@@ -100,6 +104,8 @@ var Performer =
         P.Listeners(el, '.looperfirst', 'Loop', 'click,keypress', reinit);
         P.Listeners(el, '.looperlast', 'Loop', 'click,keypress', reinit);
 		P.Listeners(el, '.looperitem', 'Loop', 'click,keypress', reinit);
+		P.Listeners(el, '.looperstart', 'Loop', 'click,keypress', reinit);
+		P.Listeners(el, '.looperpause', 'Loop', 'click,keypress', reinit);
         P.Listeners(el, '.tooltipper', 'Tooltip', 'mouseover,focus', reinit);
         P.Listeners(el, '.popup', 'Tooltip', 'mouseover,focus', reinit);
         P.Listeners(el, '.modalwindower', 'ModalWindow', 'click,keypress', reinit);
@@ -121,6 +127,7 @@ var Performer =
         P.Listeners(el, '.hooker-blur', 'Hooker', 'blur', reinit);
     },
     DoTransformers: function(el, reinit) {
+		P.Debug('Performer.DoTransformers', 'function');
         if (reinit === undefined) { reinit = false; }
         if (el === undefined || el === 'performerjsdebugwrapper') { el = ''; }
         P.Transformers(el, '.hider', 'Hide', reinit);
@@ -210,6 +217,7 @@ var Performer =
         var el = P.eventElement(e);
         // check the element has the required attributes
         if (el && P.getAttribute(el, 'id') && P.getAttribute(el, 'class')) {
+			P.Debug('Performer.Hooker('+P.getAttribute(el, 'id')+')', 'function');
             // get the event type
             var t = e.type;
             // get the classes
@@ -267,6 +275,7 @@ var Performer =
     },
     // build pagination menu
     BuildPageMenu: function(elid, page, startpage) {
+		P.Debug('Performer.BuildPageMenu('+elid+')', 'function');
         var menu = '<ul class="performer-pagination">';
         var currentpage = "";
         for (var x = 1; x <= page; x++) {
@@ -283,6 +292,7 @@ var Performer =
         var elid = P.identify(el);
         var parts = elid.split("-page");
 		var fe = P.forEach;
+		P.Debug('Performer.ShowPage('+elid+')', 'function');
         // hide all page elements
 		var h = P.Hide;
         fe(P.$$("#" + parts[0] + " .pageelement"), function(el) {
@@ -304,6 +314,7 @@ var Performer =
     },
     // shows a context menu when the mouse is right-clicked
     ContextMenu: function(e) {
+		P.Debug('Performer.ContextMenu()', 'function');
         var el = P.eventElement(e);
         // hide any other context menus
 		var h = P.Hide;
@@ -351,6 +362,7 @@ var Performer =
     Set: function(e) {
         var el = P.eventElement(e);
         if (el && P.nodeName(el)) {
+			P.Debug('Performer.Set', 'function');
             var cls = P.classNames(el);
             var value = unescape(P.classParam(cls, "value", ""));
             var targetEl = P.classParam(cls, "targetEl", P.getAttribute(el, "rel"));
@@ -359,45 +371,94 @@ var Performer =
         }
     },
     // initialises a loop by hiding all elements in a UL, OL or DL list except the first one or the first one with class 'looperdefault'
-    InitLoop: function(elid) {
+    InitLoop: function(el) {
         P.Debug('Performer.InitLoop', 'function');
-        var el = P.$(elid);
-        var shown = 0;
-        var i = 0;
-		var n = P.nodeName;
-		var h = P.Hide;
-		var hcn = P.hasClassName;
-		var id = P.identify;
-		var hsh = P.Hash;
-        P.forEach(P.children(el), function(child) {
+        var elid = P.identify(el), shown = 0, i = 0, 
+			cls = P.classNames(el),
+			delay = P.classParam(cls, "delay", 0),
+			effect = P.classParam(cls, "effect", "fadein"),
+			effect = P.getShowEffect(effect),
+			n = P.nodeName, 
+			h = P.Hide,
+			hcn = P.hasClassName, 
+			id = P.identify, 
+			hsh = P.Hash,
+			children = P.children(el);
+        P.forEach(children, function(child) {
             if (n(child)) {
                 h(child);
                 if (hcn(child, 'looperdefault') || hsh == id(child)) { shown = i; }
                 i++;
             }
         });
-        P.Show(P.children(el)[shown]);
+        P.Show(children[shown]);
+		P.LooperCurrentItem[elid] = shown;
+		// start the auto loop if set
+		if (delay > 0) P.StartLoop(elid, children, delay, effect);
     },
+	StartLoop: function(elid, children, delay, effect) {
+		var func = function() {
+			var toshow = P.LooperCurrentItem[elid] + 1;
+			if (toshow >= children.length) { toshow = 0; }
+			P.LooperCurrentItem[elid] = toshow;
+			P.forEach(children, function(child) {
+				P.Hide(child);
+			});
+			P.Show(children[toshow], effect);
+		};
+		P.LooperFuncs[elid] = window.setInterval(func, delay * 1000);
+	},
     // moves a looper element
     Loop: function(e) {
+		P.Debug('Performer.Loop', 'function');
         r = false;
         var el = P.findEventElement(e, 'A');
-        // check the element has the required attribute and is a valid event trigge;
+        // check the element has the required attribute and is a valid event trigger
         if (e.type == 'click' || P.keyCode(e) == 13) {
-            var cls = P.classNames(el);
-            var loop = P.classParam(cls, "targetEl", P.getAttribute(el, 'rel'));
+            var cls = P.classNames(el),
+				loop = P.classParam(cls, "targetEl", P.getAttribute(el, 'rel')),
+				loopEl = P.$(loop);
             // check the loop can be found
-            if (P.$(loop)) {
-                var i = 0;
-                var toshow = 0;
-                var nowshowing = 0;
-				var n = P.nodeName;
-				var v = P.visible;
-				var dbg = P.Debug;
-				var h = P.Hide;
-				var children = P.children(P.$(loop));
-				var len = children.length;
-                P.forEach(children), function(child) {
+            if (loopEl) {
+				var children = P.children(loopEl);
+				// remove the auto looper function if it exists
+				window.clearInterval(P.LooperFuncs[loop]);
+				// pause the animation
+				if (P.hasClassName(el, 'looperpause')) {
+					P.Debug('Performer.Loop (pause auto-loop)', 'function');
+					P.stopEvent(e);
+					return false;
+				}
+				// restart the animation
+				if (P.hasClassName(el, 'looperstart')) {
+					P.Debug('Performer.Loop (start auto-loop)', 'function');
+					var elcls = P.classNames(P.$(loop)),
+						delay = P.classParam(elcls, "delay", 0),
+						effect = P.classParam(elcls, "effect", "fadein"),
+						effect = P.getShowEffect(effect),
+						toshow = P.LooperCurrentItem[loop];
+					if (delay > 0) {
+						P.Hide(children[toshow]);
+						toshow++;
+						if (toshow >= children.length) { toshow = 0; }
+						P.LooperCurrentItem[loop] = toshow;
+						P.Show(children[toshow], effect);
+						P.StartLoop(loop, children, delay, effect);
+						P.stopEvent(e);
+						return false;
+					}
+				}
+                var i = 0,
+					toshow = -1,
+					nowshowing = 0,
+					n = P.nodeName,
+					v = P.visible,
+					dbg = P.Debug,
+					h = P.Hide,
+					len = children.length,
+					effect = P.classParam(cls, "effect", "fadein"),
+					effect = P.getShowEffect(effect);
+                P.forEach(children, function(child) {
                     if (n(child) && v(child)) {
                         dbg('- Currently showing item ' + i, 'subfunction');
                         nowshowing = i;
@@ -408,7 +469,7 @@ var Performer =
                 if (P.hasClassName(el, 'looperback')) {
                     P.Debug('Performer.Loop (back)', 'function');
                     toshow = nowshowing - 1;
-                    if (toshow < 0) { toshow = (len - 1); }
+                    if (toshow < 0) { toshow = len - 1; }
                 } else if (P.hasClassName(el, 'looperforward')) {
                     P.Debug('Performer.Loop (forward)', 'function');
                     toshow = nowshowing + 1;
@@ -419,19 +480,21 @@ var Performer =
                 } else if (P.hasClassName(el, 'looperlast')) {
                     P.Debug('Performer.Loop (last)', 'function');
                     toshow = len - 1;
-                } else if (P.hasClassName(el, 'looperitem')) {
+				} else if (P.hasClassName(el, 'looperitem')) {
 					toshow = P.classParam(cls, "item", 1);
 					if (toshow >= len) toshow = len - 1;
                     P.Debug('Performer.Loop ('+toshow+')', 'function');
                 }
-                P.Debug('- Showing item ' + toshow, 'subfunction');
-                P.Show(P.children(P.$(loop))[toshow], "fadein");
-                P.stopEvent(e);
-            }
-        }
+				P.LooperCurrentItem[loop] = toshow;
+				P.Debug('- Showing item ' + toshow, 'subfunction');
+				P.Show(children[toshow], effect);
+				P.stopEvent(e);
+			}
+		}
     },
     // show a tooltip when an element has mouseover or focus
     Tooltip: function(e, cssClass) {
+		P.Debug('Performer.Tooltip', 'function');
         var el = P.eventElement(e);
         if (!cssClass) { cssClass = "performertooltip"; }
         var id = P.identify(el);
@@ -694,8 +757,16 @@ var Performer =
     },
     // checks the values of fields in a form
     CheckForm: function(e) {
-        P.Debug('Performer.CheckForm', 'function');
-        var el = P.findEventElement(e, 'FORM');
+		P.Debug('Performer.CheckForm', 'function');
+		var el = P.eventElement(e),
+			cls = P.classNames(el),
+			targetForm = P.classParam(cls, "targetEl", P.findEventElement(e, 'FORM')),
+			go = P.DoCheckForm(targetForm);
+		if (!go) P.stopEvent(e);
+		return go;
+	},
+	// check the fields in the given element
+	DoCheckForm: function(el) {
         var fail = false;
         var radiogroups = [];
         // get unique fields in the form
@@ -746,7 +817,7 @@ var Performer =
             }
             // field must be a number
             if (hcn(field, 'field-required-number') || hcn(field, 'field-optional-number')) {
-                var num = val.replace(",", "").replace("&pound;", "").replace("£", "");
+                var num = val.replace(",", "").replace("&pound;", "").replace("ï¿½", "");
                 if ((hcn(field, 'field-required-number') && num == "") || (num != "" && isNaN(parseFloat(num)))) {
                     fn(identity, 'error', 'This field must be a number');
                     fail = true;
@@ -768,8 +839,10 @@ var Performer =
         });
         if (fail) {
             fn(P.identify(el), 'error', 'There are errors with some fields. Please check the form and try again.');
-            P.stopEvent(e);
-        }
+			return false;
+        } else {
+			return true;
+		}
     },
     // adds a notification to a field
     FieldNotify: function(field, messageclass, message) {
@@ -1101,19 +1174,19 @@ var Performer =
     },
     // resize a textarea element when the cursor hits the bottom of the element
     Resize: function(e) {
-        P.Debug('Performer.Resize', 'function');
-        var el = P.eventElement(e);
-        // check the element has the required attribute and is a valid event trigger
-        if (el && P.nodeName(el)) {
-            var cls = P.classNames(el);
-            var m = P.classParam(cls, 'maxHeight', 500);
-            var s = el.scrollHeight;
-            var d = P.getDimensions(el);
-            var h = d.height;
-            if ((s + 5) > h && h < m) {
-                el.style.height = (s + 10) + 'px';
-            }
-        }
+		P.Debug('Performer.Resize', 'function');
+		var el = P.eventElement(e);
+		// check the element has the required attribute and is a valid event trigger
+		if (el && P.nodeName(el)) {
+			var cls = P.classNames(el);
+			var m = P.classParam(cls, 'maxHeight', 500);
+			var s = el.scrollHeight;
+			var d = P.getDimensions(el);
+			var h = d.height;
+			if ((s + 5) > h && h < m) {
+				el.style.height = (s + 10) + 'px';
+			}
+		}
     },
     // toggle an element and load data
     ToggleLoad: function(e) {
@@ -1160,13 +1233,14 @@ var Performer =
             var tabGroup = P.classParam(cls, 'tabGroup', P.getAttribute(el, 'rel'));
             // check the tabgroup can be found
             if (tabGroup && P.$(tabGroup)) {
-                var otab = P.classParam(cls, 'tab', P.getAttribute(el, 'rev'));
-                var openTab = P.$(otab);
-                var tablinks = P.$$('.tabber');
-				var i = tablinks.length;
-				var hcn = P.hasClassName;
-				var ga = P.getAttribute;
-				var rcn = P.removeClassName;
+                var otab = P.classParam(cls, 'tab', P.getAttribute(el, 'rev')),
+					effect = P.classParam(cls, 'effect', 'fadein'),
+					openTab = P.$(otab),
+					tablinks = P.$$('.tabber'),
+					i = tablinks.length,
+					hcn = P.hasClassName,
+					ga = P.getAttribute,
+					rcn = P.removeClassName;
                 while (i--) {
                     if (hcn(tablinks[i], 'tabGroup-' + tabGroup) || ga(el, 'rel') == tabGroup) {
                         rcn(tablinks[i], 'tabbercurrent');
@@ -1182,7 +1256,8 @@ var Performer =
                 P.addClassName(el, 'tabbercurrent');
                 // show the required tab
                 P.Debug('-> Showing tab \'#' + otab + '\'', 'subfunction');
-                P.Show(openTab, 'fadein');
+				effect = P.getShowEffect(effect);
+                P.Show(openTab, effect);
                 P.stopEvent(e);
             }
         }
@@ -1639,6 +1714,21 @@ var Performer =
     // debug
     Debug: function(str, status) {
         if (P.Debugging) {
+			if (typeof window.console != "undefined" && typeof window.console.debug != "undefined") {
+				if (status == 'function') {
+					console.debug(str);
+				} else if (status == 'subfunction') {
+					console.debug("- " + str);
+				} else if (status == 'error') {
+					console.error(str);
+				} else if (status == 'success') {
+					console.info(str);
+				} else if (status == 'warning') {
+					console.warn(str);
+				} else if (status == 'ajax') {
+					console.debug(str);
+				}
+			}
             var col = '#000';
             if (status == 'function') {
                 col = '#333';
@@ -1673,42 +1763,18 @@ var Performer =
     // check element has class name
     hasClassName: function(el, cls) {
         if (!el || typeof el == 'undefined') { return false; }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.hasClassName(cls); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).hasClass(cls); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return $(el).hasClass(cls); }
-		//-mootools
     },
     // shortcut for getElementById (handles multiple elements)
     $: function(el) {
         if (typeof el == 'object') { return el; }
         if (typeof el == 'undefined') { return false; }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return $(el); }
-		//-prototype
-		//+mootools
-		if (P.MooTools) { return $(el); }
-		//-mootools
-		//+jquery
         if (P.jQuery) { return jQuery('#' + el)[0]; }
-		//-jquery
     },
     // shortcut for getElementByClassName (handles multiple elements)
     $$: function(cls) {
         var els;
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { els = $$(cls); }
-		//-prototype
-		//+mootools
-		if (P.MooTools) { els = $$(cls); }
-		//-mootools
-		//+jquery
         if (P.jQuery) { els = jQuery(cls); }
-		//-jquery
         if (els && els.length > 0) {
             return els;
         } else {
@@ -1719,29 +1785,13 @@ var Performer =
     $F: function(el) {
         var elid = P.identify(el);
         var fields;
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { fields = el.getElements(); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { fields = jQuery('#' + elid + ' :input'); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { fields = $$("#" + elid + " input", "#" + elid + " textarea", "#" + elid + " select", "#" + elid + " button"); }
-		//-mootools
         return fields;
     },
     // return the node name of an element
     nodeName: function(el) {
         var nn = false;
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { nn = el.nodeName.toLowerCase(); }
-		//-prototype
-		//+mootools
-		if (P.MooTools) { nn = el.nodeName.toLowerCase(); }
-		//-mootools
-		//+jquery
         if (P.jQuery) { nn = el.tagName.toLowerCase(); }
-		//-jquery
         if (!nn || typeof nn == 'undefined' || nn == '#document') {
             return false;
         } else {
@@ -1753,103 +1803,35 @@ var Performer =
         var s;
         if (value) {
             s = type + "[" + attr + "='" + value + "']";
-			//+prototype
-            if (P.Prototype || P.Scriptaculous) { return document.getElementsBySelector(s); }
-			//-prototype
-			//+jquery
             if (P.jQuery) { return jQuery(s); }
-			//-jquery
-			//+mootools
-            if (P.MooTools) { return document.getElements(s); }
-			//-mootools
         } else {
             s = type + "[" + attr + "]";
-			//+prototype
-            if (P.Prototype || P.Scriptaculous) { return document.getElementsBySelector(s); }
-			//-prototype
-			//+jquery
             if (P.jQuery) { return jQuery(s); }
-			//-jquery
-			//+mootools
-            if (P.MooTools) { return document.getElements(s); }
-			//-mootools
         }
     },
     // get the value of a form field
     getValue: function(el) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.getValue(); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).val(); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return el.get('value'); }
-		//-mootools
     },
     // set the value of a form field
     setValue: function(el, value) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { el.value = value; return el; }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).val(value); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return el.set('value', value); }
-		//-mootools
     },
     // get the first parent matching the filter
     up: function(el, filter) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.up(filter); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).parent(filter)[0]; }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return el.getParent(filter); }
-		//-mootools
     },
     // serialise form fields
     serialize: function(el) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.serialize(true); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).serialize(); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return el.toQueryString(); }
-		//-mootools
     },
     // update the innerHTML of an element
     update: function(el, html) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.update(html); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).html(html); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return el.set('text', html); }
-		//-mootools
     },
     // insert HTML after an element
     insertAfter: function(el, html) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return new Insertion.After(el, html); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).after(html); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) {
-            if (html.trim().substr(0, 1) !== '<') { html = '<span>' + html + '</span>'; }
-            var i = new Element('div', { 'html': html });
-            return i.inject(el, 'after');
-        }
-		//-mootools
     },
     // increment the counter
     increment: function() {
@@ -1868,27 +1850,11 @@ var Performer =
     },
     // get an element attribute
     getAttribute: function(el, attr) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.readAttribute(attr); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).attr(attr); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return el.get(attr); }
-		//-mootools
     },
     // set an element attribute
     setAttribute: function(el, attr, val) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.writeAttribute(attr, val); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).attr(attr, val); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return el.set(attr, val); }
-		//-mootools
     },
     // remove an element attribute
     removeAttribute: function(el, attr) {
@@ -1896,22 +1862,10 @@ var Performer =
     },
     // remove an element completely
     remove: function(el) {
-		//+prototype
-        if (P.Scriptaculous) { Effect.Fade(el, { duration: 0.5 }); }
-        if (P.Prototype || P.Scriptaculous) { return el.remove(); }
-		//-prototype
-		//+jquery
         if (P.jQuery) {
             jQuery(el).fadeOut("normal");
             return jQuery(el).remove();
         }
-		//-jquery
-		//+mootools
-        if (P.MooTools) {
-            el.fade('out');
-            return el.destroy();
-        }
-		//-mootools
     },
     // get an elements children
     children: function(el, selector) {
@@ -1919,27 +1873,11 @@ var Performer =
             selector = selector.replace('-', ' ');
             el = P.$$(selector);
         }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.childElements(); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).children(); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return el.getChildren(); }
-		//-mootools
     },
     // get an elements ancestors
     ancestors: function(el) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.ancestors(); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).parents(); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return el.getParents(); }
-		//-mootools
     },
     // get array of classnames for an element
     classNames: function(el) {
@@ -1961,76 +1899,37 @@ var Performer =
     // is an element visible
     visible: function(el) {
         if (typeof (el) != 'object') { el = P.$(el); }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.visible(); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).is(":visible"); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { if (el.getStyle('display') == 'none') { return false; } else { return true; } }
-		//-mootools
     },
     // add a class name
     addClassName: function(el, cls) {
         if (typeof (el) != 'object') { el = P.$(el); }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.addClassName(cls); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).addClass(cls); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return $(el).addClass(cls); }
-		//-mootools
     },
     // remove a class name
     removeClassName: function(el, cls) {
         if (typeof (el) != 'object') { el = P.$(el); }
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.removeClassName(cls); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).removeClass(cls); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return $(el).removeClass(cls); }
-		//-mootools
     },
     // set the class name
     className: function(el, cls) {
         if (typeof (el) != 'object') { el = P.$(el); }
         el.className = cls;
     },
+	// get an effect to show an element, handles random effects
+	getShowEffect: function(effect) {
+		if (effect != "random") { if (P.ShowEffects.PerformerIndexOf(effect) < 0) effect = "fadein"; }
+		if (effect == "random") effect = P.ShowEffects[Math.floor(Math.random() * P.ShowEffects.length)];
+		return effect;
+	},
     // disable the context menu on an element
     disableContext: function(el) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { P.bind(el, 'contextmenu', function(e) { e.stop(); }); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { P.bind(el, 'contextmenu', function(e) { return false; }); }
-		//-jquery
         if (P.MooTools) { return P.bind(el, 'contextmenu', function(e) { e.stop(); }); }
     },
     // hide an element, with an optional effect
     doHide: function(el, effect) {
         if (typeof (el) != 'object') { el = P.$(P.identify(el)); }
-		//+prototype
-        if (P.Prototype) { return el.hide(); }
-		if (P.Scriptaculous) {
-            if (!effect || P.Effects.PerformerIndexOf(effect) == -1) {
-                return el.hide();
-            } else {
-                if (effect == 'slideup') { return Effect.Fade(el, { duration: 0.5 }); } // SlideUp causes errors 
-                if (effect == 'slidedown') { return Effect.Appear(el, { duration: 0.5 }); }// SlideDown causes errors
-                if (effect == 'blinddown') { return Effect.BlindDown(el, { duration: 0.5 }); }
-                if (effect == 'blindup') { return Effect.BlindUp(el, { duration: 0.5 }); }
-                if (effect == 'fadein') { return Effect.Appear(el, { duration: 0.5 }); }
-                if (effect == 'fadeout') { return Effect.Fade(el, { duration: 0.5 }); }
-            }
-        }
-		//-prototype
-		//+jquery
 		if (P.jQuery) {
             if (!effect || P.Effects.PerformerIndexOf(effect) == -1) {
                 return jQuery(el).hide();
@@ -2041,35 +1940,11 @@ var Performer =
                 if (effect == 'fadeout') { return jQuery(el).fadeOut("normal"); }
             }
         }
-		//-jquery
-		//+mootools
-		if (P.MooTools) {
-            el.fade('out');
-            el.setStyle('display', 'none');
-            return el;
-        }
-		//-mootools
         return false;
     },
     // show an element, with an optional effect
     doShow: function(el, effect) {
         if (typeof (el) != 'object') { el = P.$(P.identify(el)); }
-        //+prototype
-		if (P.Prototype) { return el.show(); }
-		if (P.Scriptaculous) {
-            if (!effect || P.Effects.PerformerIndexOf(effect) == -1) {
-                return el.show();
-            } else {
-                if (effect == 'slideup') { return Effect.Fade(el, { duration: 0.5 }); } // SlideUp causes errors
-                if (effect == 'slidedown') { return Effect.Appear(el, { duration: 0.5 }); } // SlideDown causes errors
-                if (effect == 'blinddown') { return Effect.BlindDown(el, { duration: 0.5 }); }
-                if (effect == 'blindup') { return Effect.BlindUp(el, { duration: 0.5 }); }
-                if (effect == 'fadein') { return Effect.Appear(el, { duration: 0.5 }); }
-                if (effect == 'fadeout') { return Effect.Fade(el, { duration: 0.5 }); }
-            }
-        }
-		//-prototype
-		//+jquery
 		if (P.jQuery) {
             if (!effect || P.Effects.PerformerIndexOf(effect) == -1) {
                 return jQuery(el).show();
@@ -2080,31 +1955,11 @@ var Performer =
                 if (effect == 'fadeout') { return jQuery(el).fadeOut("normal"); }
             }
         }
-		//-jquery
-		//+mootools
-		if (P.MooTools) {
-            el.setStyle('display', 'block');
-            el.fade('in');
-            return el;
-        }
-		//-mootools
         return false;
     },
     // do an AJAX request
     Request: function(targetPage, requestMethod, params, successFunction) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { new Ajax.Request(targetPage, { method: requestMethod, parameters: params, onSuccess: successFunction }); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery.ajax({ type: requestMethod, url: targetPage, data: params, success: successFunction }); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) {
-            var myRequest = new Request({ method: requestMethod, url: targetPage, data: params, onSuccess: successFunction });
-            myRequest.send();
-            return myRequest;
-        }
-		//-mootools
     },
     // get the response from an AJAX request
     getRequestText: function(request) {
@@ -2124,10 +1979,6 @@ var Performer =
     // find the first ancestor element of an element which triggered an event
     findEventElement: function(e, tag) {
         var target;
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return Event.findElement(e, tag); }
-		//-prototype
-		//+jquery
         if (P.jQuery) {
             target = P.eventElement(e);
             if (target && target.nodeName && target.nodeName.toLowerCase() == tag.toLowerCase()) {
@@ -2136,65 +1987,22 @@ var Performer =
                 return jQuery(target).parents(tag)[0];
             }
         }
-		//-jquery
-		//+mootools
-        if (P.MooTools) {
-            target = P.eventElement(e);
-            if (target && target.nodeName && target.nodeName.toLowerCase() == tag.toLowerCase()) {
-                return target;
-            } else {
-                return $(target).getParent(tag);
-            }
-        }
-		//-mootools
     },
     // bind an event on the document to a function
     domLoaded: function(func) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { P.bind(document, "dom:loaded", func); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(document).ready(func); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return P.bind(window, 'domready', func); }
-		//-mootools
     },
     // bind an event on an element to a function
     bind: function(el, event, func) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { Event.observe(el, event, func); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).bind(event, func); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return $(el).addEvent(event, func); }
-		//-mootools
     },
     // unbind a function from an event on an element
     unBind: function(el, event, func) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { Event.stopObserving(el, event, func); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { return jQuery(el).unbind(event, func); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { return $(el).removeEvent(event, func); }
-		//-mootools
     },
     // stop the default action of an event firing, including bubbling and propigation
     stopEvent: function(e) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { e.preventDefault(); e.stopPropagation(); Event.stop(e); return false; }
-		//-prototype
-		//+jquery
         if (P.jQuery) { e.preventDefault(); e.stopPropagation(); return false; }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { e.stop(); return false; }
-		//-mootools
         return false;
     },
     // stop the event propagating upwards
@@ -2205,58 +2013,25 @@ var Performer =
     // get the dimensions of an element
     getDimensions: function(el) {
         var size, getsize;
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.getDimensions(); }
-		//-prototype
 		size = {};
-		//+jquery
         if (P.jQuery) {
             size.height = jQuery(el).outerHeight();
             size.width = jQuery(el).outerWidth();
         }
-		//-jquery
-		//+mootools
-        if (P.MooTools) {
-            getsize = el.getSize();
-            size.height = getsize.y;
-            size.width = getsize.x;
-        }
-		//-mootools
         return size;
     },
     // set the css style of an element
     setStyle: function(el, style) {
-		//+prototype
-        if (P.Prototype || P.Scriptaculous) { return el.setStyle(style); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { jQuery(el).css(style); }
-		//-jquery
-		//+mootools
-        if (P.MooTools) { $(el).setStyles(style); }
-		//-mootools
     },
     //animate properties of an element
     animate: function(el, params, duration) {
         var elid = P.identify(el);
         if (typeof (el) != 'object') { el = P.$(elid); }
-		//+prototype
-        if (P.Scriptaculous) { $(elid).morph(params, { duration: duration }); }
-		if (P.Prototype) { $(elid).setStyle(params); }
-		//-prototype
-		//+jquery
         if (P.jQuery) { 
 			duration = duration * 1000;
             jQuery(el).animate(params, duration); 
         }
-		//-jquery
-		//+mootools
-        if (P.MooTools) {
-			duration = duration * 1000;
-			var fx = new Fx.Morph(elid, {duration: duration, transition: Fx.Transitions.Sine.easeOut});
-			fx.start(params);
-		}
-		//-mootools
     },
 	// set up the CSS properties for morphing
 	setupMorphProperties: function(props, cls) {
@@ -2264,30 +2039,11 @@ var Performer =
 		var param, params, i, j;
 		var cp = P.classParam;
 		// loop properties, filling the output properties
-		//+prototype
-		if (P.Scriptaculous || P.Prototype) {
-			params = '';
-			for (i = 0, j = props.length; i < j; i++) {
-				param = cp(cls, props[i], false);
-				var name = props[i];
-				name = name.replace('backgroundColor', 'background');
-				name = name.replace('fontSize', 'font-size');
-				name = name.replace('borderWidth', 'border-width');
-				name = name.replace('lineHeight', 'line-height');
-				// make sure parameters with no size scale (px, em, pt) have px appended
-				param = P.fixCSSParam(name, param);
-				params += name + ': ' + param + '; ';
-			}
-		} else {
-		//-prototype
 			params = {};
 			for (i = 0, j = props.length; i < j; i++) {
 				param = cp(cls, props[i], false);
 				if (param !== false) { params[props[i]] = param.replace("px", ""); }
 			}
-		//+prototype
-		}
-		//-prototype
 		return params;
 	},
 	// make sure CSS parameters with no size scale (px, em, pt) have px appended
@@ -2314,12 +2070,6 @@ var Performer =
     // return the mouse position
     // non-MooTools code from http://www.quirksmode.org/js/events_properties.html#position
     cursorPosition: function(e) {
-		//+mootools
-        if (P.MooTools) {
-            var event = new Event(e);
-            return [event.page.x, event.page.y];
-        } else {
-		//-mootools
             var posx = 0;
             var posy = 0;
             if (!e) { e = window.event; }
@@ -2334,9 +2084,6 @@ var Performer =
                 posy = e.clientY + db.scrollTop + de.scrollTop;
             }
             return [posx, posy];
-		//+mootools
-        }
-		//-mootools
     },
     // return the position of an element
     // from http://www.quirksmode.org/js/findpos.html

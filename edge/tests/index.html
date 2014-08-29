@@ -19,6 +19,21 @@
 	<div id="qunit"></div>
 	<div id="qunit-fixture"></div>
 	
+	<div class="module focus" id="Focusser">
+		<form action="#" method="post">
+			<p><input type="text" name="text" class="focusser" /></p>
+		</form>
+	</div>
+	
+	<div class="module submitlock" id="SubmitLocker">
+		<form action="#" method="post" class="submitlocker">
+			<p>
+				<input type="submit" id="submit1" value="Submit 1" />
+				<button type="submit" id="submit2">Submit 2</button>
+			</p>
+		</form>
+	</div>
+	
 	<div class="module hider" id="Hider">
 		<h1>Hider</h1>
 		<div class="test" id="hide">
@@ -54,47 +69,61 @@
 		</div>
 		<div class="test" id="toggler-button">
 			<h2>Toggle by button</h2>
-			<p><button type="button" class="toggler" data-target="#toggler-button-target">Toggle</button></p>
+			<form>
+				<p><button type="button" class="toggler" data-target="#toggler-button-target">Toggle</button></p>
+			</form>
 			<p class="hider" id="toggler-button-target">Toggled content</p>
 		</div>
 		<div class="test" id="toggler-input-button">
 			<h2>Toggle by input[button]</h2>
-			<p><input type="button" class="toggler" data-target="#toggler-input-button-target" value="Toggle" /></p>
+			<form>
+				<p><input type="button" class="toggler" data-target="#toggler-input-button-target" value="Toggle" /></p>
+			</form>
 			<p class="hider" id="toggler-input-button-target">Toggled content</p>
 		</div>
 		<div class="test" id="toggler-input-submit">
 			<h2>Toggle by input[submit]</h2>
-			<p><input type="submit" class="toggler" data-target="#toggler-input-submit-target" value="Toggle" /></p>
+			<form>
+				<p><input type="submit" class="toggler" data-target="#toggler-input-submit-target" value="Toggle" /></p>
+			</form>
 			<p class="hider" id="toggler-input-submit-target">Toggled content</p>
 		</div>
 		<div class="test" id="toggler-checkbox">
 			<h2>Toggle by checkbox</h2>
-			<p><input type="checkbox" class="toggler" data-target="#toggler-checkbox-target" /></p>
+			<form>
+				<p><input type="checkbox" class="toggler" data-target="#toggler-checkbox-target" /></p>
+			</form>
 			<p class="hider" id="toggler-checkbox-target">Toggled content</p>
 		</div>
 		<div class="test" id="toggler-checkbox-checked">
 			<h2>Toggle by checkbox (checked)</h2>
-			<p><input type="checkbox" checked="checked" class="toggler" data-target="#toggler-checkbox-checked-target" /></p>
+			<form>
+				<p><input type="checkbox" checked="checked" class="toggler" data-target="#toggler-checkbox-checked-target" /></p>
+			</form>
 			<p class="hider" id="toggler-checkbox-checked-target">Toggled content</p>
 		</div>
 		<div class="test" id="toggler-select">
 			<h2>Toggle by select list option</h2>
-			<p>
-				<select class="toggler">
-					<option>Please select...</option>
-					<option data-target="#toggler-select-target1">Option 1</option>
-					<option data-target="#toggler-select-target2">Option 2</option>
-					<option data-target="#toggler-select-target3">Option 3</option>
-				</select>
-			</p>
+			<form>
+				<p>
+					<select class="toggler">
+						<option>Please select...</option>
+						<option data-target="#toggler-select-target1">Option 1</option>
+						<option data-target="#toggler-select-target2">Option 2</option>
+						<option data-target="#toggler-select-target3">Option 3</option>
+					</select>
+				</p>
+			</form>
 			<p class="hider" id="toggler-select-target1">You chose option 1</p>
 			<p class="hider" id="toggler-select-target2">You chose option 2</p>
 			<p class="hider" id="toggler-select-target3">You chose option 3</p>
 		</div>
 		<div class="test" id="toggler-radio">
 			<h2>Toggle by radio option</h2>
-			<p><input type="radio" name="toggler-radio" id="toggler-radio-option1" class="toggler" data-target="#toggler-radio-target1" /> Option 1</p>
-			<p><input type="radio" name="toggler-radio" id="toggler-radio-option2" class="toggler" data-target="#toggler-radio-target2" /> Option 2</p>
+			<form>
+				<p><input type="radio" name="toggler-radio" id="toggler-radio-option1" class="toggler" data-target="#toggler-radio-target1" /> Option 1</p>
+				<p><input type="radio" name="toggler-radio" id="toggler-radio-option2" class="toggler" data-target="#toggler-radio-target2" /> Option 2</p>
+			</form>
 			<p class="hider" id="toggler-radio-target1">You chose option 1</p>
 			<p class="hider" id="toggler-radio-target2">You chose option 2</p>
 		</div>
@@ -245,52 +274,68 @@
 		</div>
 		<div class="test" id="styler-button">
 			<h2>Style by button[button]</h2>
-			<p><button type="button" class="styler" data-target="#styler-button-target" data-style="highlight">Style</button></p>
+			<form>
+				<p><button type="button" class="styler" data-target="#styler-button-target" data-style="highlight">Style</button></p>
+			</form>
 			<p id="styler-button-target">Target</p>
 		</div>
 		<div class="test" id="styler-submit">
 			<h2>Style by button[submit]</h2>
-			<p><button type="submit" class="styler" data-target="#styler-submit-target" data-style="highlight">Style</button></p>
+			<form>
+				<p><button type="submit" class="styler" data-target="#styler-submit-target" data-style="highlight">Style</button></p>
+			</form>
 			<p id="styler-submit-target">Target</p>
 		</div>
 		<div class="test" id="styler-input">
 			<h2>Style by input[button]</h2>
-			<p><input type="button" class="styler" data-target="#styler-input-target" data-style="highlight" value="Style" /></p>
+			<form>
+				<p><input type="button" class="styler" data-target="#styler-input-target" data-style="highlight" value="Style" /></p>
+			</form>
 			<p id="styler-input-target">Target</p>
 		</div>
 		<div class="test" id="styler-input-submit">
 			<h2>Style by input[submit]</h2>
-			<p><input type="submit" class="styler" data-target="#styler-input-submit-target" data-style="highlight" value="Style" /></p>
+			<form>
+				<p><input type="submit" class="styler" data-target="#styler-input-submit-target" data-style="highlight" value="Style" /></p>
+			</form>
 			<p id="styler-input-submit-target">Target</p>
 		</div>
 		<div class="test" id="styler-checkbox">
 			<h2>Style by checkbox</h2>
-			<p><input type="checkbox" class="styler" data-target="#styler-checkbox-target" data-style="highlight" /></p>
+			<form>
+				<p><input type="checkbox" class="styler" data-target="#styler-checkbox-target" data-style="highlight" /></p>
+			</form>
 			<p id="styler-checkbox-target">Target</p>
 		</div>
 		<div class="test" id="styler-checkbox-checked">
 			<h2>Style by checkbox (checked)</h2>
-			<p><input type="checkbox" checked="checked" class="styler" data-target="#styler-checkbox-checked-target" data-style="highlight" /></p>
+			<form>
+				<p><input type="checkbox" checked="checked" class="styler" data-target="#styler-checkbox-checked-target" data-style="highlight" /></p>
+			</form>
 			<p id="styler-checkbox-checked-target">Target</p>
 		</div>
 		<div class="test" id="styler-select">
 			<h2>Style by select list option</h2>
-			<p>
-				<select class="styler" data-style="highlight">
-					<option>Please select...</option>
-					<option data-target="#styler-select-target1">Option 1</option>
-					<option data-target="#styler-select-target2">Option 2</option>
-					<option data-target="#styler-select-target3">Option 3</option>
-				</select>
-			</p>
+			<form>
+				<p>
+					<select class="styler" data-style="highlight">
+						<option>Please select...</option>
+						<option data-target="#styler-select-target1">Option 1</option>
+						<option data-target="#styler-select-target2">Option 2</option>
+						<option data-target="#styler-select-target3">Option 3</option>
+					</select>
+				</p>
+			</form>
 			<p id="styler-select-target1">You chose option 1</p>
 			<p id="styler-select-target2">You chose option 2</p>
 			<p id="styler-select-target3">You chose option 3</p>
 		</div>
 		<div class="test" id="styler-radio">
 			<h2>Style by radio option</h2>
-			<p><input type="radio" name="styler-radio" id="styler-radio-option1" class="styler" data-target="#styler-radio-target1" data-style="highlight" /> Option 1</p>
-			<p><input type="radio" name="styler-radio" id="styler-radio-option2" class="styler" data-target="#styler-radio-target2" data-style="highlight" /> Option 2</p>
+			<form>
+				<p><input type="radio" name="styler-radio" id="styler-radio-option1" class="styler" data-target="#styler-radio-target1" data-style="highlight" /> Option 1</p>
+				<p><input type="radio" name="styler-radio" id="styler-radio-option2" class="styler" data-target="#styler-radio-target2" data-style="highlight" /> Option 2</p>
+			</form>
 			<p id="styler-radio-target1">You chose option 1</p>
 			<p id="styler-radio-target2">You chose option 2</p>
 		</div>
@@ -331,13 +376,261 @@
 			<p><a href="#" id="tabber-class-param-tab3" class="tabber tabGroup-tabs tab-tab3">Show tab 3</a></p>
             <p><a href="#" id="tabber-class-param-tab1" class="tabber tabGroup-tabs tab-tab1">Show tab 1</a></p>
 		</div>
+		
+		<div class="test" id="tabber-select">
+			<h2>Select</h2>
+			<form>
+				<p>
+					<select id="tabber-select-list" class="tabber">
+						<option value="2" data-target="#tabs" data-tab="#tab2">Show tab 2</option>
+						<option value="3" data-target="#tabs" data-tab="#tab3">Show tab 3</option>
+					</select>
+				</p>
+			</form>
+		</div>
+		
+		<div class="test" id="tabber-radio">
+			<h2>Radio buttons</h2>
+			<form>
+				<p><input type="radio" name="tabber-input-radio" id="tabber-radio-tab2" class="tabber" data-target="#tabs" data-tab="#tab2"> Show tab 2</p>
+				<p><input type="radio" name="tabber-input-radio" id="tabber-radio-tab1" class="tabber" data-target="#tabs" data-tab="#tab1"> Show tab 1</p>
+			</form>
+		</div>
+		
+    </div>
+	
+	<div class="module truncate" id="Truncator">
+		<h1>Truncator</h1>
+		
+		<p class="truncator" id="truncator-1">This is the really, really long text to truncate. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus turpis erat, pulvinar eget, gravida in, lacinia quis, est. Mauris libero risus, dignissim sed, venenatis ornare, fringilla eget, tellus. Donec eget est. Sed euismod. Nullam pretium ultricies est. Maecenas ultrices commodo tortor. Fusce sodales convallis tortor. Aliquam malesuada lobortis enim. Pellentesque dui est, consequat venenatis, egestas nec, varius id, felis. Curabitur egestas mi. Vivamus viverra augue hendrerit ligula. Curabitur pellentesque molestie nibh. In leo. Cras feugiat. Nulla facilisi. Phasellus aliquam arcu quis massa. Vivamus a velit. Aenean tincidunt, ante at congue ornare, orci est sodales purus, sit amet dictum purus lorem in lectus. Nulla vehicula erat non orci. Donec tristique. Vestibulum est augue, suscipit ut, pulvinar sed, pretium consectetur, eros. Cras non magna. Vivamus consectetur posuere sapien. Quisque diam mi, luctus vel, viverra vel, scelerisque eu, nisl.</p>
+		
+		<p class="truncator" id="truncator-2" data-limit="20">This is the really, really long text to truncate. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus turpis erat, pulvinar eget, gravida in, lacinia quis, est. Mauris libero risus, dignissim sed, venenatis ornare, fringilla eget, tellus. Donec eget est. Sed euismod. Nullam pretium ultricies est. Maecenas ultrices commodo tortor. Fusce sodales convallis tortor. Aliquam malesuada lobortis enim. Pellentesque dui est, consequat venenatis, egestas nec, varius id, felis. Curabitur egestas mi. Vivamus viverra augue hendrerit ligula. Curabitur pellentesque molestie nibh. In leo. Cras feugiat. Nulla facilisi. Phasellus aliquam arcu quis massa. Vivamus a velit. Aenean tincidunt, ante at congue ornare, orci est sodales purus, sit amet dictum purus lorem in lectus. Nulla vehicula erat non orci. Donec tristique. Vestibulum est augue, suscipit ut, pulvinar sed, pretium consectetur, eros. Cras non magna. Vivamus consectetur posuere sapien. Quisque diam mi, luctus vel, viverra vel, scelerisque eu, nisl.</p>
+		
+		<p class="truncator" id="truncator-3" data-moretext="Read more" data-lesstext="Read less">This is the really, really long text to truncate. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus turpis erat, pulvinar eget, gravida in, lacinia quis, est. Mauris libero risus, dignissim sed, venenatis ornare, fringilla eget, tellus. Donec eget est. Sed euismod. Nullam pretium ultricies est. Maecenas ultrices commodo tortor. Fusce sodales convallis tortor. Aliquam malesuada lobortis enim. Pellentesque dui est, consequat venenatis, egestas nec, varius id, felis. Curabitur egestas mi. Vivamus viverra augue hendrerit ligula. Curabitur pellentesque molestie nibh. In leo. Cras feugiat. Nulla facilisi. Phasellus aliquam arcu quis massa. Vivamus a velit. Aenean tincidunt, ante at congue ornare, orci est sodales purus, sit amet dictum purus lorem in lectus. Nulla vehicula erat non orci. Donec tristique. Vestibulum est augue, suscipit ut, pulvinar sed, pretium consectetur, eros. Cras non magna. Vivamus consectetur posuere sapien. Quisque diam mi, luctus vel, viverra vel, scelerisque eu, nisl.</p>
+		
+	</div>
+	
+	<div class="module accordianer" id="Accordianer">
+		<h1>Accordianer</h1>
+        
+        <div id="accordian" class="accordian">
+            <p id="accordian1" class="accordianitem accordian1">This is accordian item 1</p>
+            <p id="accordian2" class="accordianitem accordian2 hider">This is accordian item 2</p>
+            <p id="accordian3" class="accordianitem accordian3 hider">This is accordian item 3</p>
+        </div>
+        
+		<div class="test" id="accordian-id">
+			<h2>Target by ID</h2>
+			<p><a href="#" id="accordian-id-item2" class="accordianer" data-target="#accordian" data-item="#accordian2">Show item 2</a></p>
+            <p><a href="#" id="accordian-id-item1" class="accordianer" data-target="#accordian" data-item="#accordian1">Show item 1</a></p>
+		</div>
+        
+        <div class="test" id="accordian-class">
+			<h2>Target by class</h2>
+			<p><a href="#" id="accordian-class-item3" class="accordianer" data-target=".accordian" data-item=".accordian3">Show item 3</a></p>
+            <p><a href="#" id="accordian-class-item1" class="accordianer" data-target=".accordian" data-item=".accordian1">Show item 1</a></p>
+		</div>
+        
+        <div class="test" id="accordian-class-param">
+			<h2>Target by class parameter</h2>
+			<p><a href="#" id="accordian-class-param-item3" class="accordianer group-accordian item-accordian3">Show item 3</a></p>
+            <p><a href="#" id="accordian-class-param-item1" class="accordianer group-accordian item-accordian1">Show item 1</a></p>
+		</div>
+		
+		<div class="test" id="accordian-select">
+			<h2>Select</h2>
+			<form>
+				<p>
+					<select id="accordianer-select-list" class="accordianer">
+						<option>Choose...</option>
+						<option val="2" data-target="#accordian" data-item="#accordian2">Show item 2</option>
+						<option val="3" data-target="#accordian" data-item="#accordian3">Show item 3</option>
+					</select>
+				</p>
+			</form>
+		</div>
+		
+		<div class="test" id="accordian-radio">
+			<h2>Radio buttons</h2>
+			<form>
+				<p><input type="radio" name="accordianer-input-radio" id="accordianer-radio-item2" class="accordianer" data-target="#accordian" data-item="#accordian2"> Show item 2</p>
+				<p><input type="radio" name="accordianer-input-radio" id="accordianer-radio-item1" class="accordianer" data-target="#accordian" data-item="#accordian1"> Show item 1</p>
+			</form>
+		</div>
+		
     </div>
 
+	<div class="module loop" id="Looper">
+		<h1>Looper</h1>
+		
+		<ul id="looperlist1" class="looper looperlist1">
+			<li id="looper1">Item 1</li>
+			<li id="looper2">Item 2</li>
+			<li id="looper3" class="looperdefault">Item 3</li>
+			<li id="looper4">Item 4</li>
+			<li id="looper5">Item 5</li>
+		</ul>
+		
+		<div class="test" id="looper-id">
+			<h2>Target by ID</h2>
+			<p>
+				<a href="#" class="looperback" data-target="#looperlist1">Move back</a>, 
+				<a href="#" class="looperforward" data-target="#looperlist1">Move forward</a>, 
+				<a href="#" class="looperfirst" data-target="#looperlist1">Move to first</a>, 
+				<a href="#" class="looperlast" data-target="#looperlist1">Move to last</a>
+				<a href="#" class="looperitem" data-target="#looperlist1" data-item="2">Move to item 3</a>
+			</p>
+		</div>
+		
+		<div class="test" id="looper-class">
+			<h2>Target by class</h2>
+			<p>
+				<a href="#" class="looperback" data-target=".looperlist1">Move back</a>, 
+				<a href="#" class="looperforward" data-target=".looperlist1">Move forward</a>, 
+				<a href="#" class="looperfirst" data-target=".looperlist1">Move to first</a>, 
+				<a href="#" class="looperlast" data-target=".looperlist1">Move to last</a>
+				<a href="#" class="looperitem" data-target=".looperlist1" data-item="2">Move to item 3</a>
+			</p>
+		</div>
+		
+		<div class="test" id="looper-class-param">
+			<h2>Target by class parameter</h2>
+			<p>
+				<a href="#" class="looperback targetEl-looperlist1">Move back</a>,
+				<a href="#" class="looperforward targetEl-looperlist1">Move forward</a>,
+				<a href="#" class="looperfirst targetEl-looperlist1">Move to first</a>,
+				<a href="#" class="looperlast targetEl-looperlist1">Move to last</a></p>
+				<a href="#" class="looperitem targetEl-looperlist1 item-2">Move to item 3</a>
+		</div>
+		
+		<h1>Auto-play looper</h1>
+		
+		<ul id="looperautolist" class="looper looperautolist delay-1">
+			<li id="autoplaylooper1">Item 1</li>
+			<li id="autoplaylooper2">Item 2</li>
+			<li id="autoplaylooper3">Item 3</li>
+			<li id="autoplaylooper4">Item 4</li>
+			<li id="autoplaylooper5">Item 5</li>
+		</ul>
+		<p id="looper-controls"><a class="looperpause" data-target="#looperautolist" href="#">Pause animation</a>, <a class="looperplay" data-target="#looperautolist" href="#">Play animation</a></p>
+		
+	</div>
+	
+	<div class="module page" id="Pager">
+		<h1>Pager</h1>
+	
+		<ul id="pagerlist" class="pager">
+			<li id="pagerlistitem1">Item 1</li>
+			<li id="pagerlistitem2">Item 2</li>
+			<li id="pagerlistitem3">Item 3</li>
+			<li id="pagerlistitem4">Item 4</li>
+			<li id="pagerlistitem5">Item 5</li>
+			<li id="pagerlistitem6">Item 6</li>
+			<li id="pagerlistitem7">Item 7</li>
+			<li id="pagerlistitem8">Item 8</li>
+			<li id="pagerlistitem9">Item 9</li>
+			<li id="pagerlistitem10">Item 10</li>
+			<li id="pagerlistitem11">Item 11</li>
+			<li id="pagerlistitem12">Item 12</li>
+			<li id="pagerlistitem13">Item 13</li>
+			<li id="pagerlistitem14">Item 14</li>
+			<li id="pagerlistitem15">Item 15</li>
+			<li id="pagerlistitem16">Item 16</li>
+			<li id="pagerlistitem17">Item 17</li>
+			<li id="pagerlistitem18">Item 18</li>
+			<li id="pagerlistitem19">Item 19</li>
+			<li id="pagerlistitem20">Item 20</li>
+			<li id="pagerlistitem21">Item 21</li>
+			<li id="pagerlistitem22">Item 22</li>
+		</ul>
+		
+		<ul id="pagerlistclassparam" class="pager pagesize-1 startpage-2">
+			<li id="pagerlistclassparam1">Item 1</li>
+			<li id="pagerlistclassparam2">Item 2</li>
+			<li id="pagerlistclassparam3">Item 3</li>
+		</ul>
+		
+		<table id="pagertable" class="pager" data-pagesize="5" data-selector="tbody" data-startpage="2">
+			<thead>
+				<tr>
+					<th>Column 1</th>
+					<th>Column 3</th>
+					<th>Column 3</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr id="pagerrow1">
+					<td>Row 1, Column 1</td>
+					<td>Row 1, Column 3</td>
+					<td>Row 1, Column 3</td>
+				</tr>
+				<tr id="pagerrow2">
+					<td>Row 2, Column 1</td>
+					<td>Row 2, Column 3</td>
+					<td>Row 2, Column 3</td>
+				</tr>
+				<tr id="pagerrow3">
+					<td>Row 3, Column 1</td>
+					<td>Row 3, Column 3</td>
+					<td>Row 3, Column 3</td>
+				</tr>
+				<tr id="pagerrow4">
+					<td>Row 4, Column 1</td>
+					<td>Row 4, Column 3</td>
+					<td>Row 4, Column 3</td>
+				</tr>
+				<tr id="pagerrow5">
+					<td>Row 5, Column 1</td>
+					<td>Row 5, Column 3</td>
+					<td>Row 5, Column 3</td>
+				</tr>
+				<tr id="pagerrow6">
+					<td>Row 6, Column 1</td>
+					<td>Row 6, Column 3</td>
+					<td>Row 6, Column 3</td>
+				</tr>
+				<tr id="pagerrow7">
+					<td>Row 7, Column 1</td>
+					<td>Row 7, Column 3</td>
+					<td>Row 7, Column 3</td>
+				</tr>
+				<tr id="pagerrow8">
+					<td>Row 8, Column 1</td>
+					<td>Row 8, Column 3</td>
+					<td>Row 8, Column 3</td>
+				</tr>
+				<tr id="pagerrow9">
+					<td>Row 9, Column 1</td>
+					<td>Row 9, Column 3</td>
+					<td>Row 9, Column 3</td>
+				</tr>
+				<tr id="pagerrow10">
+					<td>Row 10, Column 1</td>
+					<td>Row 10, Column 3</td>
+					<td>Row 10, Column 3</td>
+				</tr>
+				<tr id="pagerrow11">
+					<td>Row 11, Column 1</td>
+					<td>Row 11, Column 3</td>
+					<td>Row 11, Column 3</td>
+				</tr>
+				<tr id="pagerrow12">
+					<td>Row 12, Column 1</td>
+					<td>Row 12, Column 3</td>
+					<td>Row 12, Column 3</td>
+				</tr>
+			</tbody>
+			</table>
+	
+	</div>
+	
 	<script src="jquery-1.11.0.js"></script>
 	<script src="performer.js"></script>
 	<script src="qunit-1.14.0.js"></script>
 	<script src="tests.config.js"></script>
 	<script src="core.tests.js"></script>
+	<script src="focusser.tests.js"></script>
+	<script src="submitlocker.tests.js"></script>
 	<script src="hider.tests.js"></script>
 	<script src="shower.tests.js"></script>
 	<script src="toggler.tests.js"></script>
@@ -345,7 +638,11 @@
 	<script src="switcher.tests.js"></script>
 	<script src="sizer.tests.js"></script>
 	<script src="styler.tests.js"></script>
-    <script src="morpher.tests.js"></script>
+    <!--script src="morpher.tests.js"></script-->
     <script src="tabber.tests.js"></script>
+	<script src="truncator.tests.js"></script>
+	<script src="accordianer.tests.js"></script>
+	<script src="looper.tests.js"></script>
+	<script src="pager.tests.js"></script>
 </body>
 </html>
