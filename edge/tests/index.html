@@ -638,24 +638,51 @@
 	<div class="module hook" id="Hooker">
 		<h1>Hooker</h1>
 		<p id="hooker-target">Target</p>
+		
 		<p>Click <a id="hooker-click" class="hooker-click" href="#Hooker" data-func="hookerClick">Click</a></p>
 		<p>Click (class parameter) <a id="hooker-click-class-param" class="hooker-click func-hookerClick" href="#Hooker">Click</a></p>
+		
 		<p>Keypress <input type="text" id="hooker-keypress" class="hooker-keypress" data-func="hookerKeypress" /></p>
-		<p>Keypress <input type="text" id="hooker-keypress-class-param" class="hooker-keypress func-hookerKeypress" /></p>
+		<p>Keypress (class parameter)<input type="text" id="hooker-keypress-class-param" class="hooker-keypress func-hookerKeypress" /></p>
+		
+		<p>Keydown <input type="text" id="hooker-keydown" class="hooker-keydown" data-func="hookerKeydown" /></p>
+		<p>Keydown (class parameter)<input type="text" id="hooker-keydown-class-param" class="hooker-keydown func-hookerKeydown" /></p>
+		
 		<p> Change
-			<select id="hooker-change-select" class="hooker-change">
+			<select id="hooker-change-select" class="hooker-change" data-func="hookerChange">
 				<option value="1">1</option>
 				<option value="2">2</option>
 				<option value="3">3</option>
 			</select>
 		</p>
-		<p> Change
-			<input type="checkbox" id="hooker-change-checkbox" class="hooker-change" />
+		<p> Change (class parameter)
+			<select id="hooker-change-select-class-param" class="hooker-change func-hookerChange">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+			</select>
 		</p>
-		<form class="hooker-submit" id="hooker-submit" method="post" action="./">
+		
+		<p> Change
+			<input type="checkbox" id="hooker-change-checkbox" class="hooker-change" data-func="hookerChange" />
+		</p>
+		<p> Change (class parameter)
+			<input type="checkbox" id="hooker-change-checkbox-class-param" class="hooker-change func-hookerChange" />
+		</p>
+		
+		<form class="hooker-submit" id="hooker-submit" method="post" action="./" data-func="hookerSubmit">
 			<p><button type="submit">Submit</button></p>
 		</form>
-		<p>Focus/blur <input type="text" id="hooker-focus" class="hooker-focus hooker-blur" /></p>
+		<form class="hooker-submit func-hookerSubmit" id="hooker-submit-class-param" method="post" action="./">
+			<p><button type="submit">Submit (class parameter)</button></p>
+		</form>
+		
+		<p>Focus <input type="text" id="hooker-focus" class="hooker-focus" data-func="hookerFocus" /></p>
+		<p>Focus (class parameter) <input type="text" id="hooker-focus-class-param" class="hooker-focus func-hookerFocus" /></p>
+		
+		<p>Blur <input type="text" id="hooker-blur" class="hooker-blur" data-func="hookerBlur" /></p>
+		<p>Blur (class parameter) <input type="text" id="hooker-blur-class-param" class="hooker-blur func-hookerBlur" /></p>
+		
 	</div>
 	
 	<script src="jquery-1.11.0.js"></script>
@@ -684,10 +711,27 @@
 	<script>
 		var hookerTarget = $('#hooker-target');
 		function hookerClick( el, e ) {
-			hookerTarget.html( 'Clicked' );
+			hookerTarget.html( 'Clicked, ' + el[0].id );
 		}
 		function hookerKeypress( el, e ) {
-			hookerTarget.html( 'Keypress' );
+			hookerTarget.html( 'Keypress, ' + el[0].id + ', ' + ( e.which || e.keyCode ) );
+		}
+		function hookerKeydown( el, e ) {
+			hookerTarget.html( 'Keydown, ' + el[0].id + ', ' + ( e.which || e.keyCode ) );
+		}
+		function hookerChange( el, e ) {
+			hookerTarget.html( 'Change, ' + el[0].id );
+		}
+		function hookerFocus( el, e ) {
+			hookerTarget.html( 'Focus, ' + el[0].id );
+		}
+		function hookerBlur( el, e ) {
+			hookerTarget.html( 'Blur, ' + el[0].id );
+		}
+		function hookerSubmit( el, e ) {
+			hookerTarget.html( 'Submit, ' + el[0].id );
+			e.preventDefault();
+			return false;
 		}
 	</script>
 </body>

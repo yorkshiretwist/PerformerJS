@@ -256,6 +256,7 @@ This work is released under any of the following licenses, please choose the one
 		// hooker
 		body.on( 'click keypress', '.hooker-click', hook );
         body.on( 'keypress', '.hooker-keypress', hook );
+		body.on( 'keydown', '.hooker-keydown', hook );
         body.on( 'change', '.hooker-change', hook );
         body.on( 'mouseover', '.hooker-mouseover', hook );
         body.on( 'mouseout', '.hooker-mouseout', hook );
