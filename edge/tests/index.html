@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <title>Performer Test Suite</title>
-  <link rel="stylesheet" href="qunit-1.14.0.css">
+  <link rel="stylesheet" href="qunit-1.17.1.css">
   <style type="text/css">
-	#qunit { position: fixed; right: 10px; top: 10px; width: 60%; background: #fff; }
+	#qunit { position: absolute; right: 10px; top: 10px; width: 60%; background: #fff; }
 	.module { display: block; }
 	.test { border-left: 3px solid #fff; }
 	.test.passed { border-left-color: #C6E746; color: #ccc; }
@@ -60,7 +60,8 @@
 		<div class="test" id="toggler-class">
 			<h2>Target by class</h2>
 			<p><a href="#" class="toggler" data-target="#toggler-class .toggler-class-target">Toggle</a></p>
-		<p class="hider toggler-class-target">Toggled content</p>
+			<p class="hider toggler-class-target">Toggled content 1</p>
+			<p class="hider toggler-class-target">Toggled content 2</p>
 		</div>
 		<div class="test" id="toggler-class-param">
 			<h2>Target by class parameter</h2>
@@ -343,10 +344,20 @@
     
     <div class="module morpher" id="Morpher">
 		<h1>Morpher</h1>
-		<div class="test" id="styler-id">
+		<div class="test" id="morpher-id">
 			<h2>Target by ID</h2>
-			<p><a href="#" class="styler" data-target="#styler-id-target" data-style="highlight">Style</a></p>
-			<p id="styler-id-target">Target</p>
+			<p><a href="#" class="morpher" id="morpher-padding" data-target="#morpher-id-target" data-padding="100px">Morph padding</a></p>
+			<p><a href="#" class="morpher" id="morpher-margin" data-target="#morpher-id-target" data-margin="100px">Morph margin</a></p>
+			<p><a href="#" class="morpher" id="morpher-width" data-target="#morpher-id-target" data-width="100px">Morph width</a></p>
+			<p><a href="#" class="morpher" id="morpher-height" data-target="#morpher-id-target" data-height="200px">Morph height</a></p>
+			<p><a href="#" class="morpher" id="morpher-opacity" data-target="#morpher-id-target" data-opacity="0.25">Morph opacity</a></p>
+			<p><a href="#" class="morpher" id="morpher-fontsize" data-target="#morpher-id-target" data-font-size="3em">Morph font size</a></p>
+			<p><a href="#" class="morpher" id="morpher-lineheight" data-target="#morpher-id-target" data-line-height="3em">Morph line height</a></p>
+			<p><a href="#" class="morpher" id="morpher-borderwidth" data-target="#morpher-id-target" data-border-width="40px">Morph border width</a></p>
+			<p><a href="#" class="morpher" id="morpher-multiple" data-target="#morpher-id-target" data-border-width="40px" data-padding="100px" data-font-size="3em">Morph multiple properties</a></p>
+			<p><a href="#" class="morpher" id="morpher-color" data-target="#morpher-id-target" data-color="#f00">Morph color</a></p>
+			<p><a href="#" class="morpher" id="morpher-backgroundcolor" data-target="#morpher-id-target" data-background-color="#f00">Morph background color</a></p>
+			<p id="morpher-id-target" class="highlight">Target</p>
 		</div>
     </div>
     
@@ -624,9 +635,33 @@
 	
 	</div>
 	
+	<div class="module hook" id="Hooker">
+		<h1>Hooker</h1>
+		<p id="hooker-target">Target</p>
+		<p>Click <a id="hooker-click" class="hooker-click" href="#Hooker" data-func="hookerClick">Click</a></p>
+		<p>Click (class parameter) <a id="hooker-click-class-param" class="hooker-click func-hookerClick" href="#Hooker">Click</a></p>
+		<p>Keypress <input type="text" id="hooker-keypress" class="hooker-keypress" data-func="hookerKeypress" /></p>
+		<p>Keypress <input type="text" id="hooker-keypress-class-param" class="hooker-keypress func-hookerKeypress" /></p>
+		<p> Change
+			<select id="hooker-change-select" class="hooker-change">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+			</select>
+		</p>
+		<p> Change
+			<input type="checkbox" id="hooker-change-checkbox" class="hooker-change" />
+		</p>
+		<form class="hooker-submit" id="hooker-submit" method="post" action="./">
+			<p><button type="submit">Submit</button></p>
+		</form>
+		<p>Focus/blur <input type="text" id="hooker-focus" class="hooker-focus hooker-blur" /></p>
+	</div>
+	
 	<script src="jquery-1.11.0.js"></script>
 	<script src="performer.js"></script>
-	<script src="qunit-1.14.0.js"></script>
+	<script src="jquery.color.js"></script>
+	<script src="qunit-1.17.1.js"></script>
 	<script src="tests.config.js"></script>
 	<script src="core.tests.js"></script>
 	<script src="focusser.tests.js"></script>
@@ -638,11 +673,22 @@
 	<script src="switcher.tests.js"></script>
 	<script src="sizer.tests.js"></script>
 	<script src="styler.tests.js"></script>
-    <!--script src="morpher.tests.js"></script-->
+    <script src="morpher.tests.js"></script>
     <script src="tabber.tests.js"></script>
 	<script src="truncator.tests.js"></script>
 	<script src="accordianer.tests.js"></script>
 	<script src="looper.tests.js"></script>
 	<script src="pager.tests.js"></script>
+	<script src="hooker.tests.js"></script>
+	
+	<script>
+		var hookerTarget = $('#hooker-target');
+		function hookerClick( el, e ) {
+			hookerTarget.html( 'Clicked' );
+		}
+		function hookerKeypress( el, e ) {
+			hookerTarget.html( 'Keypress' );
+		}
+	</script>
 </body>
 </html>

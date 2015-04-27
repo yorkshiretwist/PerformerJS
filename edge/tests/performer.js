@@ -41,9 +41,13 @@ This work is released under any of the following licenses, please choose the one
 	// the defaults
 	defaults = {
 		hideClass: 'hider',
+		hiderHidden: 'hidden',
 		showClass: 'shower',
+		showerShown: 'shown',
 		togglerOpenClass: 'toggleropen',
 		togglerClosedClass: 'togglerclosed',
+		focusserFocussedClass: 'focussed',
+		submitlockerDisabled: 'disabled'
 	},
 	
 	// stores enumerations
@@ -69,7 +73,7 @@ This work is released under any of the following licenses, please choose the one
 		resetCallback();
 		
 		// initialise properties
-		initialisationError = enums.initialisationError.None;
+		Performer.initialisationError = enums.initialisationError.None;
 		
 		// check the jQuery version
 		if ( ! checkjQueryVersion()) {
@@ -96,7 +100,7 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// set Performer as being initialised
-		isInitialised = true;
+		Performer.isInitialised = true;
 	},
 	
 	// checks the version of jQuery to ensure it is new enough
@@ -177,6 +181,11 @@ This work is released under any of the following licenses, please choose the one
 			doShow( $( this ) );
 		});
 		
+		// focusser
+		$( '.focusser', body ).each( function(){
+			focus( $( this ) );
+		});
+		
 		// truncator
 		$( '.truncator', body ).each( function() {
 			truncate( $( this ) );
@@ -190,11 +199,6 @@ This work is released under any of the following licenses, please choose the one
 		// pager
 		$( '.pager', body ).each( function(){
 			initPager( $( this ) );
-		});
-		
-		// focusser
-		$( '.focusser', body ).each( function(){
-			focus( $( this ) );
 		});
 		
 		// submitlocker
@@ -245,6 +249,19 @@ This work is released under any of the following licenses, please choose the one
 		
 		// pager
 		body.on( 'click keypress', '.performer-pagination a', page );
+		
+		// morpher
+		body.on( 'click keypress', "a.morpher,form button.morpher,form input[type='button'].morpher,form input[type='submit'].morpher", morph );
+		
+		// hooker
+		body.on( 'click keypress', '.hooker-click', hook );
+        body.on( 'keypress', '.hooker-keypress', hook );
+        body.on( 'change', '.hooker-change', hook );
+        body.on( 'mouseover', '.hooker-mouseover', hook );
+        body.on( 'mouseout', '.hooker-mouseout', hook );
+        body.on( 'submit', '.hooker-submit', hook );
+        body.on( 'focus', '.hooker-focus', hook );
+        body.on( 'blur', '.hooker-blur', hook );
 	},
 	
 	// ========================================================================================
@@ -741,15 +758,116 @@ This work is released under any of the following licenses, please choose the one
 	// focus on the given element
 	focus = function( el ) {
 		el.focus();
+		el.addClass(defaults.focusserFocussedClass);
 	},
 	
 	// stops a form being submitted more than once
 	submitlocker = function( el ) {
 		el.on( 'submit', function( e ) {
-			$( "input[type='submit'],button[type='submit']" ).prop( 'disabled', true );
+			var btns = $( "input[type='submit'],button[type='submit']", el );
+			btns.prop( 'disabled', true );
+			btns.addClass( defaults.submitlockerDisabled );
 			e.preventDefault();
 			return false;
 		});
+	},
+	
+	// morphs an element
+	morph = function( e ) {
+		var el = $( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		// get the target
+		var compatibilityPrefix = '#';
+		var target = getTarget( el, compatibilityPrefix );
+		
+		// check a target has been given
+		if ( ! target ) {
+			return true;
+		}
+		
+		// get the target element(s)
+		var targetEl = $( target );
+		if ( ! targetEl.length ) {
+			return true;
+		}
+		
+		// get the allowed properties to morph
+		var props = ["lineHeight", "margin", "padding", "width", "height", "opacity", "fontSize", "borderWidth"];
+		if (jQuery.Color){
+			props.push("color");
+			props.push("backgroundColor");
+		}
+		var params = setupMorphProperties( el, props );
+		
+		// get the delay for the morphing
+		var delay = el.dataVar( 'delay', 0 ) * 1000;
+		
+		// get the duration for the morphing
+		var duration = el.dataVar( 'duration', 0.3 ) * 1000;
+		
+		if ( delay === 0 ) {
+			$( targetEl ).animate( params, duration )
+		} else {
+			window.setTimeout( function() {
+				$( targetEl ).animate( params, duration )
+			}, delay );
+		}
+		
+		// stop the event propagating
+		return stopEvent( e );
+	},
+	
+	// setup the morphing properties
+	setupMorphProperties = function( el, props ) {
+		// initialise params
+		var param, params, i, j;
+		// loop properties, filling the output properties
+		params = {};
+		for ( i = 0, j = props.length; i < j; i++ ) {
+			param = el.dataVar( props[i], false );
+			if ( param !== false ) {
+				if ( typeof param == 'string' ) {
+					params[ props[ i ] ] = param.replace( 'px', '' );
+				} else {
+					params[ props[ i ] ] = param;
+				}
+			}
+		}
+		return params;
+	},
+	
+	// fires a function when an event happens
+	hook = function( e ) {
+		var el = $( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		// get the function
+		var func = el.dataVar( 'func', undefined )
+		
+		// get the delay for the morphing
+		var delay = el.dataVar( 'delay', 0 ) * 1000;
+		
+		if ( delay === 0 ) {
+			callFunc( func, el, e );
+		} else {
+			window.setTimeout( function() {
+				callFunc( func, el, e );
+			}, delay );
+		}
+	},
+	
+	// calls a user-defined function
+	callFunc = function( func, el, e ) {
+		// check the function exists
+		if ( eval( 'typeof(' + func + ')' ) == 'function' ) {
+			// execute the function, passing the element and event
+			eval( func + '(el,e)' );
+		}
 	},
 	
 	// ========================================================================================
@@ -850,7 +968,9 @@ This work is released under any of the following licenses, please choose the one
 		
 		// toggle the classes
 		el.removeClass( defaults.hideClass );
+		el.removeClass( defaults.hiderHidden );
 		el.addClass( defaults.showClass );
+		el.addClass( defaults.showerShown );
 		return el;
 	},
 	
@@ -869,7 +989,9 @@ This work is released under any of the following licenses, please choose the one
 		
 		// toggle the classes
 		el.removeClass( defaults.showClass );
+		el.removeClass( defaults.showerShown );
 		el.addClass( defaults.hideClass );
+		el.addClass( defaults.hiderHidden );
 		return el;
 	},
 	
@@ -888,6 +1010,8 @@ This work is released under any of the following licenses, please choose the one
 		if ( effect === undefined ) {
 			return false;
 		}
+		var callback = Performer.callback;
+		Performer.resetCallback();
 		if ( effect == 'slideup' || effect == 'blindup' ) { 
 			return el.slideUp( "normal", callback ); 
 		}
@@ -933,14 +1057,14 @@ This work is released under any of the following licenses, please choose the one
 	
 	// runs the callback function, if one is set
 	doCallback = function() {
-		if (typeof callback == 'function') {
-			callback();
+		if (typeof Performer.callback == 'function') {
+			Performer.callback();
 		}
 	},
 	
 	// resets the callback function
 	resetCallback = function() {
-		callback = function(){};
+		Performer.callback = function(){};
 	},
 	
 	// ========================================================================================

@@ -1,149 +1,164 @@
-module( "Accordianer" );
+QUnit.module( "Accordianer" );
 
 if ( testConfig.runAll || testConfig.run.accordianer ) {
 
-	test( "Target by ID", function() {
+	QUnit.test( "Target by ID", function( assert ) {
 		var testId = 'accordian-id';
+		var done1 = assert.async();
+		var done2 = assert.async();
+		test1();
 		
 		function test1() {
-			$( '#' + testId + ' a#accordian-id-item2' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
-				ok( $( '#accordian #accordian2' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
-				start();
+			console.log(testId + ' - test1()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
+				assert.ok( $( '#accordian #accordian2' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
+				done1();
 				test2();
-			}, 1000);
+			};
+			$( '#' + testId + ' a#accordian-id-item2' ).click();
 		}
 		
 		function test2() {
+			console.log(testId + ' - test2()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.ok( $( '#accordian #accordian1' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
+				done2();
+			};
 			$( '#' + testId + ' a#accordian-id-item1' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#accordian #accordian1' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
-				start();
-			}, 1000);
 		}
-		
-		test1();
 	});
     
-    test( "Target by class", function() {
+    QUnit.test( "Target by class", function( assert ) {
 		var testId = 'accordian-class';
+		var done1 = assert.async();
+		var done2 = assert.async();
+		test1();
 		
 		function test1() {
-			$( '#' + testId + ' a#accordian-class-item3' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
-				ok( $( '#accordian #accordian3' ).is( ':visible' ) );
-				start();
+			Performer.callback = function(){
+				console.log(testId + ' - test1()');
+				Performer.resetCallback();
+				assert.ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
+				assert.ok( $( '#accordian #accordian3' ).is( ':visible' ) );
+				done1();
 				test2();
-			}, 1000);
+			};
+			$( '#' + testId + ' a#accordian-class-item3' ).click();
 		}
            
 		function test2() {
+			Performer.callback = function(){
+				console.log(testId + ' - test2()');
+				Performer.resetCallback();
+				assert.ok( $( '#accordian #accordian1' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
+				done2();
+			};
 			$( '#' + testId + ' a#accordian-class-item1' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#accordian #accordian1' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
-				start();
-			}, 1000);
 		}
-		
-		test1();
 	});
         
-    test( "Target by class parameter", function() {
+    QUnit.test( "Target by class parameter", function( assert ) {
 		var testId = 'accordian-class-param';
+		var done1 = assert.async();
+		var done2 = assert.async();
+		test1();
 		
 		function test1() {
+			Performer.callback = function(){
+				console.log(testId + ' - test1()');
+				Performer.resetCallback();
+				assert.ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
+				assert.ok( $( '#accordian #accordian3' ).is( ':visible' ) );
+				done1();
+				test2();
+			};
 			$( '#' + testId + ' a#accordian-class-param-item3' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
-				ok( $( '#accordian #accordian3' ).is( ':visible' ) );
-				start();
-				test2();
-			}, 1000);
 		}
            
 		function test2() {
+			Performer.callback = function(){
+				console.log(testId + ' - test2()');
+				Performer.resetCallback();
+				assert.ok( $( '#accordian #accordian1' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
+				done2();
+			};
 			$( '#' + testId + ' a#accordian-class-param-item1' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#accordian #accordian1' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
-				start();
-			}, 1000);
 		}
-		
-		test1();
 	});
 	
-	test( "Target by select", function() {
+	QUnit.test( "Target by select", function( assert ) {
 		var testId = 'accordian-select';
+		var done1 = assert.async();
+		var done2 = assert.async();
+		test1();
 		
 		function test1() {
-			$( '#' + testId + ' #accordianer-select-list' ).prop( 'selectedIndex', 1 ).change();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
-				ok( $( '#accordian #accordian2' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
-				start();
+			Performer.callback = function(){
+				console.log(testId + ' - test1()');
+				Performer.resetCallback();
+				assert.ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
+				assert.ok( $( '#accordian #accordian2' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
+				done1();
 				test2();
-			}, 1000);
+			};
+			$( '#' + testId + ' #accordianer-select-list' ).prop( 'selectedIndex', 1 ).change();
 		}
            
 		function test2() {
+			Performer.callback = function(){
+				console.log(testId + ' - test2()');
+				Performer.resetCallback();
+				assert.ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
+				assert.ok( $( '#accordian #accordian3' ).is( ':visible' ) );
+				done2();
+			};
 			$( '#' + testId + ' #accordianer-select-list' ).prop( 'selectedIndex', 2 ).change();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
-				ok( $( '#accordian #accordian3' ).is( ':visible' ) );
-				start();
-			}, 1000);
 		}
-		
-		test1();
 	});
 	
-	test( "Target by radio button", function() {
+	QUnit.test( "Target by radio button", function( assert ) {
 		var testId = 'accordian-radio';
+		var done1 = assert.async();
+		var done2 = assert.async();
+		test1();
 		
 		function test1() {
-			$( '#' + testId + ' #accordianer-radio-item2' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
-				ok( $( '#accordian #accordian2' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
-				start();
+			Performer.callback = function(){
+				console.log(testId + ' - test1()');
+				Performer.resetCallback();
+				assert.ok( ! $( '#accordian #accordian1' ).is( ':visible' ) );
+				assert.ok( $( '#accordian #accordian2' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
+				done1();
 				test2();
-			}, 1000);
+			};
+			$( '#' + testId + ' #accordianer-radio-item2' ).click();
 		}
            
 		function test2() {
-			$( '#' + testId + ' #accordianer-radio-item1' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#accordian #accordian1' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
-				ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
+			Performer.callback = function(){
+				console.log(testId + ' - test2()');
+				Performer.resetCallback();
+				assert.ok( $( '#accordian #accordian1' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian2' ).is( ':visible' ) );
+				assert.ok( ! $( '#accordian #accordian3' ).is( ':visible' ) );
 				start();
-			}, 1000);
+			};
+			$( '#' + testId + ' #accordianer-radio-item1' ).click();
 		}
-		
-		test1();
 	});
 }

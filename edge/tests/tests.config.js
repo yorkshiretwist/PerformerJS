@@ -6,7 +6,6 @@ QUnit.moduleDone(function( details ) {
 	//$( '#' + details.name ).hide();
 });
 
-
 var testConfig = {
 
 	// run all tests
@@ -26,7 +25,7 @@ var testConfig = {
 		shower: false,
 		
 		toggler: {
-			all: true,
+			all: false,
 			general: false,
 			formelements: false,
 			effects: false,
@@ -51,13 +50,11 @@ var testConfig = {
 		
 		accordianer: false,
 		
-		looper: {
-			all: false,
-			standard: false,
-			autoplay: false
-		},
+		looper: false,
 		
-		pager: false
+		pager: false,
+		
+		hooker: true
 	}
 }
 
@@ -92,24 +89,22 @@ if (!testConfig.runAll) {
     if (!testConfig.run.morpher) {
         $('.module.morpher').hide();
     }
-	
 	if (!testConfig.run.tabber) {
         $('.module.tabber').hide();
     }
-	
 	if (!testConfig.run.truncator) {
         $('.module.truncate').hide();
     }
-	
 	if (!testConfig.run.accordianer) {
         $('.module.accordianer').hide();
     }
-	
-	if (!testConfig.run.looper.all) {
+	if (!testConfig.run.looper) {
         $('.module.loop').hide();
     }
-	
 	if (!testConfig.run.pager) {
         $('.module.page').hide();
+    }
+	if (!testConfig.run.hooker) {
+        $('.module.hook').hide();
     }
 }

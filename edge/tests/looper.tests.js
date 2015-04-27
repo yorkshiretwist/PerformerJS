@@ -1,297 +1,315 @@
-module( "Looper" );
+QUnit.module( "Looper" );
 
 if ( testConfig.runAll || testConfig.run.looper.all || testConfig.run.looper.standard ) {
 
-	test( "Looper default", function() {
-		ok( ! $( '#looper1' ).is( ':visible' ) );
-		ok( ! $( '#looper2' ).is( ':visible' ) );
-		ok( $( '#looper3' ).is( ':visible' ) );
-		ok( ! $( '#looper4' ).is( ':visible' ) );
-		ok( ! $( '#looper5' ).is( ':visible' ) );
+	QUnit.test( "Looper default", function( assert ) {
+		assert.ok( ! $( '#looper1' ).is( ':visible' ) );
+		assert.ok( ! $( '#looper2' ).is( ':visible' ) );
+		assert.ok( $( '#looper3' ).is( ':visible' ) );
+		assert.ok( ! $( '#looper4' ).is( ':visible' ) );
+		assert.ok( ! $( '#looper5' ).is( ':visible' ) );
 	});
 
-	test( "Target by ID", function() {
+	QUnit.test( "Target by ID", function( assert ) {
 		var testId = 'looper-id';
+		var looperforwarddone = assert.async();
+		var looperbackdone = assert.async();
+		var looperlastdone = assert.async();
+		var looperfirstdone = assert.async();
+		var looperbackfromfirstdone = assert.async();
+		var looperforwardfromlastdone = assert.async();
+		var looperitemdone = assert.async();
+		
+		looperforward();
 		
 		function looperforward() {
-			$( '#' + testId + ' .looperforward' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 3 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 3 );
+				looperforwarddone();
 				looperback();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperforward' ).click();
 		}
            
 		function looperback() {
-			$( '#' + testId + ' .looperback' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 2 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 2 );
+				looperbackdone();
 				looperlast();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperback' ).click();
 		}
 		
 		function looperlast() {
-			$( '#' + testId + ' .looperlast' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 4 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 4 );
+				looperlastdone();
 				looperfirst();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperlast' ).click();
 		}
 		
 		function looperfirst() {
-			$( '#' + testId + ' .looperfirst' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 0 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 0 );
+				looperfirstdone();
 				looperbackfromfirst();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperfirst' ).click();
 		}
 		
 		function looperbackfromfirst() {
-			$( '#' + testId + ' .looperback' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 4 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 4 );
+				looperbackfromfirstdone();
 				looperforwardfromlast();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperback' ).click();
 		}
 		
 		function looperforwardfromlast() {
-			$( '#' + testId + ' .looperforward' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 0 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 0 );
+				looperforwardfromlastdone();
 				looperitem();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperforward' ).click();
 		}
 		
 		function looperitem() {
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 2 );
+				looperitemdone();
+			};
 			$( '#' + testId + ' .looperitem' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 2 );
-				start();
-			}, 1000);
 		}
-		
-		looperforward();
 	});
     
-    test( "Target by class", function() {
+    QUnit.test( "Target by class", function( assert ) {
 		var testId = 'looper-class';
+		var looperforwarddone = assert.async();
+		var looperbackdone = assert.async();
+		var looperlastdone = assert.async();
+		var looperfirstdone = assert.async();
+		var looperbackfromfirstdone = assert.async();
+		var looperforwardfromlastdone = assert.async();
+		var looperitemdone = assert.async();
+		
+		looperforward();
 		
 		function looperforward() {
-			$( '#' + testId + ' .looperforward' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 3 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 3 );
+				looperforwarddone();
 				looperback();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperforward' ).click();
 		}
            
 		function looperback() {
-			$( '#' + testId + ' .looperback' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 2 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 2 );
+				looperbackdone();
 				looperlast();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperback' ).click();
 		}
 		
 		function looperlast() {
-			$( '#' + testId + ' .looperlast' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 4 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 4 );
+				looperlastdone();
 				looperfirst();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperlast' ).click();
 		}
 		
 		function looperfirst() {
-			$( '#' + testId + ' .looperfirst' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 0 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 0 );
+				looperfirstdone();
 				looperbackfromfirst();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperfirst' ).click();
 		}
 		
 		function looperbackfromfirst() {
-			$( '#' + testId + ' .looperback' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 4 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 4 );
+				looperbackfromfirstdone();
 				looperforwardfromlast();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperback' ).click();
 		}
 		
 		function looperforwardfromlast() {
-			$( '#' + testId + ' .looperforward' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 0 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 0 );
+				looperforwardfromlastdone();
 				looperitem();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperforward' ).click();
 		}
 		
 		function looperitem() {
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 2 );
+				looperitemdone();
+			};
 			$( '#' + testId + ' .looperitem' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 2 );
-				start();
-			}, 1000);
 		}
-		
-		looperforward();
 	});
 	
-	test( "Target by class parameter", function() {
+	QUnit.test( "Target by class parameter", function( assert ) {
 		var testId = 'looper-class-param';
+		var looperforwarddone = assert.async();
+		var looperbackdone = assert.async();
+		var looperlastdone = assert.async();
+		var looperfirstdone = assert.async();
+		var looperbackfromfirstdone = assert.async();
+		var looperforwardfromlastdone = assert.async();
+		var looperitemdone = assert.async();
+		
+		looperforward();
 		
 		function looperforward() {
-			$( '#' + testId + ' .looperforward' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 3 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 3 );
+				looperforwarddone();
 				looperback();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperforward' ).click();
 		}
            
 		function looperback() {
-			$( '#' + testId + ' .looperback' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 2 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 2 );
+				looperbackdone();
 				looperlast();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperback' ).click();
 		}
 		
 		function looperlast() {
-			$( '#' + testId + ' .looperlast' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 4 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 4 );
+				looperlastdone();
 				looperfirst();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperlast' ).click();
 		}
 		
 		function looperfirst() {
-			$( '#' + testId + ' .looperfirst' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 0 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 0 );
+				looperfirstdone();
 				looperbackfromfirst();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperfirst' ).click();
 		}
 		
 		function looperbackfromfirst() {
-			$( '#' + testId + ' .looperback' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 4 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 4 );
+				looperbackfromfirstdone();
 				looperforwardfromlast();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperback' ).click();
 		}
 		
 		function looperforwardfromlast() {
-			$( '#' + testId + ' .looperforward' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 0 );
-				start();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 0 );
+				looperforwardfromlastdone();
 				looperitem();
-			}, 1000);
+			};
+			$( '#' + testId + ' .looperforward' ).click();
 		}
 		
 		function looperitem() {
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperlist1 li:visible' ).length, 1 );
+				assert.equal( $( '#looperlist1 li:visible' ).index(), 2 );
+				looperitemdone();
+			};
 			$( '#' + testId + ' .looperitem' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperlist1 li:visible' ).length, 1 );
-				equal( $( '#looperlist1 li:visible' ).index(), 2 );
-				start();
-			}, 1000);
 		}
-		
-		looperforward();
 	});
        		
 }
 
 if ( testConfig.runAll || testConfig.run.looper.all || testConfig.run.looper.autoplay ) {
-
-	test( "Auto-play looper default", function() {
-		ok( $( '#autoplaylooper1' ).is( ':visible' ) );
-		ok( ! $( '#autoplaylooper2' ).is( ':visible' ) );
-		ok( ! $( '#autoplaylooper3' ).is( ':visible' ) );
-		ok( ! $( '#autoplaylooper4' ).is( ':visible' ) );
-		ok( ! $( '#autoplaylooper5' ).is( ':visible' ) );
-	});
 	
-	test( "Pause and play", function() {
+	QUnit.test( "Pause and play", function( assert ) {
 		var testId = 'looper-controls';
+		var looperpausedone = assert.async();
+		var looperplaydone = assert.async();
+		
+		looperpause();
 		
 		function looperpause() {
 			var currentIndex = $( '#looperautolist' ).children( ':visible' ).index();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.equal( $( '#looperautolist' ).children( ':visible' ).index(), currentIndex );
+				window.setTimeout(function(){
+					assert.equal( $( '#looperautolist' ).children( ':visible' ).index(), currentIndex );
+					looperpausedone();
+					looperplay();
+				}, 3000);
+			};
 			$( '#' + testId + ' .looperpause' ).click();
-			stop();
-			setTimeout(function(){
-				equal( $( '#looperautolist' ).children( ':visible' ).index(), currentIndex );
-				start();
-				looperplay();
-			}, 2000);
 		}
 		
 		function looperplay() {
 			var currentIndex = $( '#looperautolist' ).children( ':visible' ).index();
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.notEqual( $( '#looperautolist' ).children( ':visible' ).index(), currentIndex );
+				looperplaydone();
+			};
 			$( '#' + testId + ' .looperplay' ).click();
-			stop();
-			setTimeout(function(){
-				notEqual( $( '#looperautolist' ).children( ':visible' ).index(), currentIndex );
-				start();
-			}, 3000);
 		}
-		
-		looperpause();
 	});
 }

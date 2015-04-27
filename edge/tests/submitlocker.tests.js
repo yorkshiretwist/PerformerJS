@@ -1,17 +1,23 @@
-module( "SubmitLocker" );
+QUnit.module( "SubmitLocker" );
+
 if ( testConfig.runAll || testConfig.run.submitlocker ) {
 
-	test( "SubmitLocker", function() {
+	QUnit.test( "SubmitLocker", function( assert ) {
 	
 		$( '#SubmitLocker form' ).on ('submit', function(e) {
 			e.preventDefault();
 			return false;
 		});
 	
-		$( '#SubmitLocker #submit1' ).click();
+		var btn1 = $( '#SubmitLocker #submit1' );
+		var btn2 = $( '#SubmitLocker #submit2' );
 	
-		ok( $( '#SubmitLocker #submit1' ).is( ":disabled" ), '#submit1 disabled' );
-		ok( $( '#SubmitLocker #submit2' ).is( ":disabled" ), '#submit2 disabled' );
+		btn1.click();
+	
+		assert.ok( btn1.is( ":disabled" ), '#submit1 is disabled' );
+		assert.ok( btn1.hasClass( 'disabled' ), '#submit1 has disabled class' );
+		assert.ok( btn2.is( ":disabled" ), '#submit2 is disabled' );
+		assert.ok( btn2.hasClass( 'disabled' ), '#submit2 has disabled class' );
 		
 	});
 }

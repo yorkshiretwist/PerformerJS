@@ -1,119 +1,126 @@
-module( "Styler" );
+QUnit.module( "Styler" );
 
 if ( testConfig.runAll || testConfig.run.styler ) {
 
-	test( "Target by ID", function() {
+	QUnit.test( "Target by ID", function( assert ) {
 		var testId = 'styler-id';
 		
 		$( '#' + testId + ' a.styler' ).click();
 		
-		ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
+		assert.ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
 	});
 	
-	test( "Target by class", function() {
+	QUnit.test( "Target by class", function( assert ) {
 		var testId = 'styler-class';
 		
 		$( '#' + testId + ' a.styler' ).click();
 		
-		ok( $( '.' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
+		assert.ok( $( '.' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
 	});
 	
-	test( "Target by class parameter", function() {
+	QUnit.test( "Target by class parameter", function( assert ) {
 		var testId = 'styler-class-param';
 		
 		$( '#' + testId + ' a.styler' ).click();
 		
-		ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
+		assert.ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
 	});
 	
-	test( "Target by ID with delay", function() {
+	QUnit.test( "Target by ID with delay", function( assert ) {
 		var testId = 'styler-id-delay';
 		
 		$( '#' + testId + ' a.styler' ).click();
 		stop();
 		
 		setTimeout(function(){
-			ok( ! $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Toggle target does not have class after 1000ms');
+			assert.ok( ! $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Toggle target does not have class after 1000ms');
 			start();
 			stop();
 			setTimeout(function(){
-				ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Toggle target has class after 2500ms');
+				assert.ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Toggle target has class after 2500ms');
 				start();
 			}, 1500);
 		}, 1000);
 	});
 	
-	test( "Target by class parameter with delay", function() {
+	QUnit.test( "Target by class parameter with delay", function( assert ) {
 		var testId = 'styler-class-param-delay';
 		
-		$( '#' + testId + ' a.styler' ).click();
-		stop();
+		var done1 = assert.async();
+		var done2 = assert.async();
 		
-		setTimeout(function(){
-			ok( ! $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Toggle target does not have class after 1000ms');
-			start();
-			stop();
+		doit();
+		
+		function doit() {
+			console.log(testId + ' - doit()');
+			$( '#' + testId + ' a.styler' ).click();
+			
 			setTimeout(function(){
-				ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Toggle target has class after 2500ms');
-				start();
-			}, 1500);
-		}, 1000);
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Toggle target does not have class after 1000ms');
+				done1();
+				setTimeout(function(){
+					assert.ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Toggle target has class after 2500ms');
+					done2();
+				}, 1500);
+			}, 1000);
+		}
 	});
 	
-	test( "Style by button[button]", function() {
+	QUnit.test( "Style by button[button]", function( assert ) {
 		var testId = 'styler-button';
 		
 		$( '#' + testId + ' button.styler' ).click();
 		
-		ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
+		assert.ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
 	});
 	
-	test( "Style by button[submit]", function() {
+	QUnit.test( "Style by button[submit]", function( assert ) {
 		var testId = 'styler-submit';
 		
 		$( '#' + testId + ' button.styler' ).click();
 		
-		ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
+		assert.ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
 	});
 	
-	test( "Style by input[button]", function() {
+	QUnit.test( "Style by input[button]", function( assert ) {
 		var testId = 'styler-input';
 		
 		$( '#' + testId + ' input.styler' ).click();
 		
-		ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
+		assert.ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
 	});
 	
-	test( "Style by input[submit]", function() {
+	QUnit.test( "Style by input[submit]", function( assert ) {
 		var testId = 'styler-input-submit';
 		
 		$( '#' + testId + ' input.styler' ).click();
 		
-		ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
+		assert.ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
 	});
 	
-	test( "Style by checkbox", function() {
+	QUnit.test( "Style by checkbox", function( assert ) {
 		var testId = 'styler-checkbox';
 		
 		$( '#' + testId + ' input.styler' ).click();
 			
-		ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
+		assert.ok( $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has class' );
 		
 		$( '#' + testId + ' input.styler' ).click();
 			
-		ok( ! $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has had class removed' );
+		assert.ok( ! $( '#' + testId + '-target' ).hasClass( 'highlight' ), 'Target has had class removed' );
 	});
     
-    test( "Style by radio option", function() {
+    QUnit.test( "Style by radio option", function( assert ) {
         var testId = 'styler-radio';
         
         $( '#' + testId + '-option1' ).click();
         
-        ok( $( '#' + testId + '-target1' ).hasClass( 'highlight' ), 'Target 1 has class' );
+        assert.ok( $( '#' + testId + '-target1' ).hasClass( 'highlight' ), 'Target 1 has class' );
         
         $( '#' + testId + '-option2' ).click();
         
-        ok( ! $( '#' + testId + '-target1' ).hasClass( 'highlight' ), 'Target 1 has had class removed' );
-        ok( $( '#' + testId + '-target2' ).hasClass( 'highlight' ), 'Target 2 has class' );
+        assert.ok( ! $( '#' + testId + '-target1' ).hasClass( 'highlight' ), 'Target 1 has had class removed' );
+        assert.ok( $( '#' + testId + '-target2' ).hasClass( 'highlight' ), 'Target 2 has class' );
     });
 }

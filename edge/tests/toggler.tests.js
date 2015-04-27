@@ -1,473 +1,592 @@
-module( "Toggler" );
+QUnit.module( "Toggler" );
 
 if ( testConfig.runAll || testConfig.run.toggler.all || testConfig.run.toggler.general ) {
 
-	asyncTest( "Target by ID", function() {
+	QUnit.test( "Target by ID", function( assert ) {
 		var testId = 'toggler-id';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
 			Performer.callback = function(){
 				Performer.resetCallback();
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				ok( $( '#' + testId + ' #' + testId + '-target' ).hasClass( 'toggleropen' ), 'Toggle target has open class');
-				start();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				assert.ok( el.hasClass( 'toggleropen' ), 'Toggle target has open class');
+				done1();
 				hide();
 			};
 			$( '#' + testId + ' a.toggler' ).click();
 		}
 		
 		function hide() {
+			console.log(testId + ' - hide()');
 			Performer.callback = function(){
 				Performer.resetCallback();
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).hasClass( 'toggleropen' ), 'Toggle target does not have open class');
-				ok( $( '#' + testId + ' #' + testId + '-target' ).hasClass( 'togglerclosed' ), 'Toggle target has closed class');
-				start();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden');
+				assert.ok( ! el.hasClass( 'toggleropen' ), 'Toggle target does not have open class');
+				assert.ok( el.hasClass( 'togglerclosed' ), 'Toggle target has closed class');
+				done2();
 			};
 			$( '#' + testId + ' a.toggler' ).click();
 		}
 	});
 
-	test( "Target by class", function() {
+	QUnit.test( "Target by class", function( assert ) {
 		var testId = 'toggler-class';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		show();
 		
 		function show() {
-			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' .' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				ok( $( '#' + testId + ' .' + testId + '-target' ).hasClass( 'toggleropen' ), 'Toggle target has open class');
-				start();
+			console.log(testId + ' - show()');
+			
+			var els = $( '#' + testId + ' .' + testId + '-target' );
+			var elsCount = els.length;
+			
+			Performer.callback = function(){
+				// only fire the callback when the last element has been shown
+				if ( --elsCount > 0 ) {
+					return;
+				}
+				Performer.resetCallback();
+				assert.ok( els.is( ':visible' ), 'Toggle target visible');
+				assert.ok( els.hasClass( 'toggleropen' ), 'Toggle target has open class');
+				done1();
 				hide();
-			}, 1000);
+			};
+			$( '#' + testId + ' a.toggler' ).click();
 		}
 		
 		function hide() {
+			console.log(testId + ' - hide()');
+			
+			var els = $( '#' + testId + ' .' + testId + '-target' );
+			var elsCount = els.length;
+			
+			Performer.callback = function(){
+				// only fire the callback when the last element has been hidden
+				if ( --elsCount > 0 ) {
+					return;
+				}
+				Performer.resetCallback();
+				assert.ok( ! els.is( ':visible' ), 'Toggle target hidden');
+				assert.ok( ! els.hasClass( 'toggleropen' ), 'Toggle target does not have open class');
+				assert.ok( els.hasClass( 'togglerclosed' ), 'Toggle target has closed class');
+				done2();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' .' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
-				ok( ! $( '#' + testId + ' .' + testId + '-target' ).hasClass( 'toggleropen' ), 'Toggle target does not have open class');
-				ok( $( '#' + testId + ' .' + testId + '-target' ).hasClass( 'togglerclosed' ), 'Toggle target has closed class');
-				start();
-			}, 1000);
 		}
 	});
 
-	test( "Target by class parameter", function() {
-
-		if ( ! testConfig.runAll && ! testConfig.run.toggler.general ) {
-			return;
-		}
+	QUnit.test( "Target by class parameter", function( assert ) {
 
 		var testId = 'toggler-class-param';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		show();
 		
 		function show() {
-			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				ok( $( '#' + testId + ' #' + testId + '-target' ).hasClass( 'toggleropen' ), 'Toggle target has open class');
-				start();
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				assert.ok( el.hasClass( 'toggleropen' ), 'Toggle target has open class');
+				done1();
 				hide();
-			}, 1000);
+			};
+			$( '#' + testId + ' a.toggler' ).click();
 		}
 		
 		function hide() {
+			console.log(testId + ' - hide()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden');
+				assert.ok( ! el.hasClass( 'toggleropen' ), 'Toggle target does not have open class');
+				assert.ok( el.hasClass( 'togglerclosed' ), 'Toggle target has closed class');
+				done2();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).hasClass( 'toggleropen' ), 'Toggle target does not have open class');
-				ok( $( '#' + testId + ' #' + testId + '-target' ).hasClass( 'togglerclosed' ), 'Toggle target has closed class');
-				start();
-			}, 1000);
 		}
 	});
 }
 
 if ( testConfig.runAll || testConfig.run.toggler.all || testConfig.run.toggler.formelements ) {
 
-	test( "Toggle by button", function() {
+	QUnit.test( "Toggle by button", function( assert ) {
 		var testId = 'toggler-button';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		show();
 		
 		function show() {
-			$( '#' + testId + ' button.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				start();
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				done1();
 				hide();
-			}, 1000);
+			};
+			$( '#' + testId + ' button.toggler' ).click();
 		}
 		
 		function hide() {
+			console.log(testId + ' - hide()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden');
+				done2();
+			};
 			$( '#' + testId + ' button.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
-				start();
-			}, 1000);
 		}
 	});
 	
-	test( "Toggle by input[button]", function() {
+	QUnit.test( "Toggle by input[button]", function( assert ) {
 		var testId = 'toggler-input-button';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		show();
 		
 		function show() {
-			$( '#' + testId + ' input.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				start();
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				done1();
 				hide();
-			}, 1000);
+			};
+			$( '#' + testId + ' input.toggler' ).click();
 		}
 		
 		function hide() {
+			console.log(testId + ' - hide()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden');
+				done2();
+			};
 			$( '#' + testId + ' input.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
-				start();
-			}, 1000);
 		}
 	});
 	
-	test( "Toggle by input[submit]", function() {
+	QUnit.test( "Toggle by input[submit]", function( assert ) {
 		var testId = 'toggler-input-submit';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		show();
 		
 		function show() {
-			$( '#' + testId + ' input.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				start();
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				done1();
 				hide();
-			}, 1000);
+			};
+			$( '#' + testId + ' input.toggler' ).click();
 		}
 		
 		function hide() {
+			console.log(testId + ' - hide()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden');
+				done2();
+			};
 			$( '#' + testId + ' input.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
-				start();
-			}, 1000);
 		}
 	});
 
-	test( "Toggle by checkbox", function() {
+	QUnit.test( "Toggle by checkbox", function( assert ) {
 		var testId = 'toggler-checkbox';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		show();
 		
 		function show() {
-			$( '#' + testId + ' input.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				start();
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				done1();
 				hide();
-			}, 1000);
+			};
+			$( '#' + testId + ' input.toggler' ).click();
 		}
 		
 		function hide() {
+			console.log(testId + ' - hide()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden');
+				done2();
+			};
 			$( '#' + testId + ' input.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
-				start();
-			}, 1000);
 		}
 	});
 	
-	test( "Toggle by checkbox (checked)", function() {
+	QUnit.test( "Toggle by checkbox (checked)", function( assert ) {
 		var testId = 'toggler-checkbox-checked';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		show();
 		
 		function show() {
-			$( '#' + testId + ' input.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				start();
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' )
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				done1();
 				hide();
-			}, 1000);
+			};
+			$( '#' + testId + ' input.toggler' ).click();
 		}
 		
 		function hide() {
+			console.log(testId + ' - hide()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden');
+				done2();
+			};
 			$( '#' + testId + ' input.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
-				start();
-			}, 1000);
 		}
 	});
 	
-	test( "Toggle by select list option", function() {
+	QUnit.test( "Toggle by select list option", function( assert ) {
 		var testId = 'toggler-select';
+		var done1 = assert.async();
+		var done2 = assert.async();
+		var done3 = assert.async();
 		option1();
 		
 		function option1() {
-			$( '#' + testId + ' select.toggler' ).val( 'Option 1' ).trigger( 'change' );
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Option 1 target visible');
-				ok( ! $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Option 2 target hidden');
-				ok( ! $( '#' + testId + ' #' + testId + '-target3' ).is( ':visible' ), 'Option 3 target hidden');
-				start();
+			console.log(testId + ' - option1()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el1 = $( '#' + testId + ' #' + testId + '-target1' );
+				var el2 = $( '#' + testId + ' #' + testId + '-target2' );
+				var el3 = $( '#' + testId + ' #' + testId + '-target3' );
+				assert.ok( el1.is( ':visible' ), 'Option 1 target visible');
+				assert.ok( ! el2.is( ':visible' ), 'Option 2 target hidden');
+				assert.ok( ! el3.is( ':visible' ), 'Option 3 target hidden');
+				done1();
 				option2();
-			}, 1000);
+			};
+			$( '#' + testId + ' select.toggler' ).val( 'Option 1' ).trigger( 'change' );
 		}
 		
 		function option2() {
-			$( '#' + testId + ' select.toggler' ).val( 'Option 2' ).trigger( 'change' );
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Option 1 target hidden');
-				ok( $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Option 2 target visible');
-				ok( ! $( '#' + testId + ' #' + testId + '-target3' ).is( ':visible' ), 'Option 3 target hidden');
-				start();
+			console.log(testId + ' - option2()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el1 = $( '#' + testId + ' #' + testId + '-target1' );
+				var el2 = $( '#' + testId + ' #' + testId + '-target2' );
+				var el3 = $( '#' + testId + ' #' + testId + '-target3' );
+				assert.ok( ! el1.is( ':visible' ), 'Option 1 target hidden');
+				assert.ok( el2.is( ':visible' ), 'Option 2 target visible');
+				assert.ok( ! el3.is( ':visible' ), 'Option 3 target hidden');
+				done2();
 				option3();
-			}, 1000);
+			};
+			$( '#' + testId + ' select.toggler' ).val( 'Option 2' ).trigger( 'change' );
 		}
 		
 		function option3() {
+			console.log(testId + ' - option3()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el1 = $( '#' + testId + ' #' + testId + '-target1' );
+				var el2 = $( '#' + testId + ' #' + testId + '-target2' );
+				var el3 = $( '#' + testId + ' #' + testId + '-target3' );
+				assert.ok( ! el1.is( ':visible' ), 'Option 1 target hidden');
+				assert.ok( ! el2.is( ':visible' ), 'Option 2 target hidden');
+				assert.ok( el3.is( ':visible' ), 'Option 3 target visible');
+				done3();
+			};
 			$( '#' + testId + ' select.toggler' ).val( 'Option 3' ).trigger( 'change' );
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Option 1 target hidden');
-				ok( ! $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Option 2 target hidden');
-				ok( $( '#' + testId + ' #' + testId + '-target3' ).is( ':visible' ), 'Option 3 target visible');
-				start();
-			}, 1000);
 		}
 	});
 	
-	test( "Toggle by radio option", function() {
+	QUnit.test( "Toggle by radio option", function( assert ) {
 		var testId = 'toggler-radio';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		option1();
 		
 		function option1() {
-			$( '#' + testId + ' #' + testId + '-option1' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Option 1 target visible');
-				ok( ! $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Option 2 target hidden');
-				start();
+			console.log(testId + ' - option1()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el1 = $( '#' + testId + ' #' + testId + '-target1' );
+				var el2 = $( '#' + testId + ' #' + testId + '-target2' );
+				assert.ok( el1.is( ':visible' ), 'Option 1 target visible');
+				assert.ok( ! el2.is( ':visible' ), 'Option 2 target hidden');
+				done1();
 				option2();
-			}, 1000);
+			};
+			$( '#' + testId + ' #' + testId + '-option1' ).click();
 		}
 		
 		function option2() {
+			console.log(testId + ' - option2()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el1 = $( '#' + testId + ' #' + testId + '-target1' );
+				var el2 = $( '#' + testId + ' #' + testId + '-target2' );
+				assert.ok( ! el1.is( ':visible' ), 'Option 1 target hidden');
+				assert.ok( el2.is( ':visible' ), 'Option 2 target visible');
+				done2();
+			};
 			$( '#' + testId + ' #' + testId + '-option2' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Option 1 target hidden');
-				ok( $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Option 2 target visible');
-				start();
-			}, 1000);
 		}
 	});
 }
 
 if ( testConfig.runAll || testConfig.run.toggler.all || testConfig.run.toggler.effects ) {
 
-	test( "Target by ID with show effect", function() {
+	QUnit.test( "Target by ID with show effect", function( assert ) {
 		var testId = 'toggler-id-showeffect';
+		var done = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				done();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				start();
-			}, 1000);
 		}
 	});
 
-	test( "Target by class parameter with show effect", function() {
+	QUnit.test( "Target by class parameter with show effect", function( assert ) {
 		var testId = 'toggler-class-param-showeffect';
+		var done = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				done();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				start();
-			}, 1000);
 		}
 	});
 
-	test( "Target by ID with hide effect", function() {
+	QUnit.test( "Target by ID with hide effect", function( assert ) {
 		var testId = 'toggler-id-hideeffect';
+		var done = assert.async();
 		hide();
 		
 		function hide() {
+			console.log(testId + ' - hide()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden');
+				done();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
-				start();
-			}, 1000);
 		}
 	});
 
-	test( "Target by class parameter with hide effect", function() {
+	QUnit.test( "Target by class parameter with hide effect", function( assert ) {
 		var testId = 'toggler-class-param-hideeffect';
+		var done = assert.async();
 		hide();
 		
 		function hide() {
+			console.log(testId + ' - hide()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden');
+				done();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden');
-				start();
-			}, 1000);
 		}
 	});
 }
 
 if ( testConfig.runAll || testConfig.run.toggler.all || testConfig.run.toggler.moving ) {
 
-	test( "Target by ID and allow moving", function() {
+	QUnit.test( "Target by ID and allow moving", function( assert ) {
 		var testId = 'toggler-id-move';
+		var done = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				assert.ok( window.location.hash === '#' + testId, 'Window is at correct anchor' );
+				done();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				ok( window.location.hash === '#' + testId, 'Window is at correct anchor' );
-				start();
-			}, 1000);
 		}
 	});
 
-	test( "Target by ID and allow moving with absolute URL", function() {
+	QUnit.test( "Target by ID and allow moving with absolute URL", function( assert ) {
 		var testId = 'toggler-id-move-absolute';
+		var done = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				assert.ok( window.location.hash === '#' + testId, 'Window is at correct anchor' );
+				done();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				ok( window.location.hash === '#' + testId, 'Window is at correct anchor' );
-				start();
-			}, 1000);
 		}
 	});
 
-	test( "Target by class parameter and allow moving", function() {
+	QUnit.test( "Target by class parameter and allow moving", function( assert ) {
 		var testId = 'toggler-class-param-move';
+		var done = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				assert.ok( window.location.hash === '#' + testId, 'Window is at correct anchor' );
+				done();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				ok( window.location.hash === '#' + testId, 'Window is at correct anchor' );
-				start();
-			}, 1000);
 		}
 	});
 
-	test( "Target by class parameter and allow moving with absolute URL", function() {
+	QUnit.test( "Target by class parameter and allow moving with absolute URL", function( assert ) {
 		var testId = 'toggler-class-param-move-absolute';
+		var done = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				assert.ok( window.location.hash === '#' + testId, 'Window is at correct anchor' );
+				done();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				ok( window.location.hash === '#' + testId, 'Window is at correct anchor' );
-				start();
-			}, 1000);
 		}
 	});
 }
 
 if ( testConfig.runAll || testConfig.run.toggler.all || testConfig.run.toggler.parents ) {
 
-	test( "Target by ID showing hidden parent elements", function() {
+	QUnit.test( "Target by ID showing hidden parent elements", function( assert ) {
 		var testId = 'toggler-id-show-parents';
+		var done = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				var parent = $( '#' + testId + ' #' + testId + '-target-parent' );
+				assert.ok( parent.is( ':visible' ), 'Toggle target parent visible');
+				done();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				ok( $( '#' + testId + ' #' + testId + '-target-parent' ).is( ':visible' ), 'Toggle target parent visible');
-				start();
-			}, 1000);
 		}
 	});
 
-	test( "Target by class parameter showing hidden parent elements", function() {
+	QUnit.test( "Target by class parameter showing hidden parent elements", function( assert ) {
 		var testId = 'toggler-class-param-show-parents';
+		var done = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( el.is( ':visible' ), 'Toggle target visible');
+				var parent = $( '#' + testId + ' #' + testId + '-target-parent' );
+				assert.ok( parent.is( ':visible' ), 'Toggle target parent visible');
+				done();
+			};
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
-			setTimeout(function(){
-				ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible');
-				ok( $( '#' + testId + ' #' + testId + '-target-parent' ).is( ':visible' ), 'Toggle target parent visible');
-				start();
-			}, 1000);
 		}
 	});
 }
 
 if ( testConfig.runAll || testConfig.run.toggler.all || testConfig.run.toggler.delay ) {
 
-	test( "Target by ID with delay", function() {
+	QUnit.test( "Target by ID with delay", function( assert ) {
 		var testId = 'toggler-id-delay';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
+			
 			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden after 1000ms');
-				start();
-				stop();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden after 1000ms');
+				done1();
 				setTimeout(function(){
-					ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible after 2500ms');
-					start();
+					assert.ok( el.is( ':visible' ), 'Toggle target visible after 2500ms');
+					done2();
 				}, 1500);
 			}, 1000);
 		}
 	});
 
-	test( "Target by class parameter with delay", function() {
+	QUnit.test( "Target by class parameter with delay", function( assert ) {
 		var testId = 'toggler-class-param-delay';
+		var done1 = assert.async();
+		var done2 = assert.async();
 		show();
 		
 		function show() {
+			console.log(testId + ' - show()');
 			$( '#' + testId + ' a.toggler' ).click();
-			stop();
+			
 			setTimeout(function(){
-				ok( ! $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target hidden after 1000ms');
-				start();
-				stop();
+				var el = $( '#' + testId + ' #' + testId + '-target' );
+				assert.ok( ! el.is( ':visible' ), 'Toggle target hidden after 1000ms');
+				done1();
 				setTimeout(function(){
-					ok( $( '#' + testId + ' #' + testId + '-target' ).is( ':visible' ), 'Toggle target visible after 2500ms');
-					start();
+					assert.ok( el.is( ':visible' ), 'Toggle target visible after 2500ms');
+					done2();
 				}, 1500);
 			}, 1000);
 		}

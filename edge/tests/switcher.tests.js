@@ -1,55 +1,119 @@
-module( "Switcher" );
+QUnit.module( "Switcher" );
 
 if ( testConfig.runAll || testConfig.run.switcher ) {
 
-	test( "Target by ID", function() {
+	QUnit.test( "Target by ID", function( assert ) {
 		var testId = 'switcher-id';
 		
-		ok( $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Target 1 visible on page load');
-		ok( ! $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Target 2 hidden on page load');
+		var done1 = assert.async();
+		var done2 = assert.async();
 		
-		$( '#' + testId + ' a.switcher' ).click();
+		var el1 = $( '#' + testId + ' #' + testId + '-target1' );
+		var el2 = $( '#' + testId + ' #' + testId + '-target2' );
 		
-		ok( ! $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Target 1 hidden after first click');
-		ok( $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Target 2 visible after first click');
+		assert.ok( el1.is( ':visible' ), 'Target 1 visible on page load');
+		assert.ok( ! el2.is( ':visible' ), 'Target 2 hidden on page load');
 		
-		$( '#' + testId + ' a.switcher' ).click();
+		do1();
 		
-		ok( $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Target 1 visible after second click');
-		ok( ! $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Target 2 hidden after second click');
+		function do1() {
+			console.log(testId + ' - do1()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.ok( ! el1.is( ':visible' ), 'Target 1 hidden after first click');
+				assert.ok( el2.is( ':visible' ), 'Target 2 visible after first click');
+				done1();
+				do2();
+			};
+			$( '#' + testId + ' a.switcher' ).click();
+		};
+		
+		function do2() {
+			console.log(testId + ' - do2()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.ok( el1.is( ':visible' ), 'Target 1 visible after second click');
+				assert.ok( ! el2.is( ':visible' ), 'Target 2 hidden after second click');
+				done2();
+			};
+			$( '#' + testId + ' a.switcher' ).click();
+		};
 	});
 	
-	test( "Target by class", function() {
+	QUnit.test( "Target by class", function( assert ) {
 		var testId = 'switcher-class';
 		
-		ok( $( '#' + testId + ' .' + testId + '-target1' ).is( ':visible' ), 'Target 1 visible on page load');
-		ok( ! $( '#' + testId + ' .' + testId + '-target2' ).is( ':visible' ), 'Target 2 hidden on page load');
+		var done1 = assert.async();
+		var done2 = assert.async();
 		
-		$( '#' + testId + ' a.switcher' ).click();
+		var el1 = $( '#' + testId + ' .' + testId + '-target1' );
+		var el2 = $( '#' + testId + ' .' + testId + '-target2' );
 		
-		ok( ! $( '#' + testId + ' .' + testId + '-target1' ).is( ':visible' ), 'Target 1 hidden after first click');
-		ok( $( '#' + testId + ' .' + testId + '-target2' ).is( ':visible' ), 'Target 2 visible after first click');
+		assert.ok( el1.is( ':visible' ), 'Target 1 visible on page load');
+		assert.ok( ! el2.is( ':visible' ), 'Target 2 hidden on page load');
 		
-		$( '#' + testId + ' a.switcher' ).click();
+		do1();
 		
-		ok( $( '#' + testId + ' .' + testId + '-target1' ).is( ':visible' ), 'Target 1 visible after second click');
-		ok( ! $( '#' + testId + ' .' + testId + '-target2' ).is( ':visible' ), 'Target 2 hidden after second click');
+		function do1() {
+			console.log(testId + ' - do1()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.ok( ! el1.is( ':visible' ), 'Target 1 hidden after first click');
+				assert.ok( el2.is( ':visible' ), 'Target 2 visible after first click');
+				done1();
+				do2();
+			};
+			$( '#' + testId + ' a.switcher' ).click();
+		};
+		
+		function do2() {
+			console.log(testId + ' - do2()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.ok( el1.is( ':visible' ), 'Target 1 visible after second click');
+				assert.ok( ! el2.is( ':visible' ), 'Target 2 hidden after second click');
+				done2();
+			};
+			$( '#' + testId + ' a.switcher' ).click();
+		};
 	});
 	
-	test( "Target by class parameter", function() {
+	QUnit.test( "Target by class parameter", function( assert ) {
 		var testId = 'switcher-class-param';
 		
-		ok( $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Target 1 visible on page load');
-		ok( ! $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Target 2 hidden on page load');
+		var done1 = assert.async();
+		var done2 = assert.async();
 		
-		$( '#' + testId + ' a.switcher' ).click();
+		var el1 = $( '#' + testId + ' #' + testId + '-target1' );
+		var el2 = $( '#' + testId + ' #' + testId + '-target2' );
 		
-		ok( ! $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Target 1 hidden after first click');
-		ok( $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Target 2 visible after first click');
+		assert.ok( el1.is( ':visible' ), 'Target 1 visible on page load');
+		assert.ok( ! el2.is( ':visible' ), 'Target 2 hidden on page load');
 		
-		$( '#' + testId + ' a.switcher' ).click();
+		do1();
 		
-		ok( $( '#' + testId + ' #' + testId + '-target1' ).is( ':visible' ), 'Target 1 visible after second click');
-		ok( ! $( '#' + testId + ' #' + testId + '-target2' ).is( ':visible' ), 'Target 2 hidden after second click');
+		function do1() {
+			console.log(testId + ' - do1()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.ok( ! el1.is( ':visible' ), 'Target 1 hidden after first click');
+				assert.ok( el2.is( ':visible' ), 'Target 2 visible after first click');
+				done1();
+				do2();
+			};
+			$( '#' + testId + ' a.switcher' ).click();
+		};
+		
+		function do2() {
+			console.log(testId + ' - do2()');
+			Performer.callback = function(){
+				Performer.resetCallback();
+				assert.ok( el1.is( ':visible' ), 'Target 1 visible after second click');
+				assert.ok( ! el2.is( ':visible' ), 'Target 2 hidden after second click');
+				done2();
+			};
+			$( '#' + testId + ' a.switcher' ).click();
+		};
 	});
+	
 }
