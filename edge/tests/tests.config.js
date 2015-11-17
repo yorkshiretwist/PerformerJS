@@ -54,7 +54,19 @@ var testConfig = {
 		
 		pager: false,
 		
-		hooker: true
+		hooker: false,
+		
+		popper: false,
+		
+		duplicator: false,
+		
+		setter: false,
+		
+		limiter: false,
+		
+		prompter: false,
+		
+		editor: true
 	}
 }
 
@@ -106,5 +118,23 @@ if (!testConfig.runAll) {
     }
 	if (!testConfig.run.hooker) {
         $('.module.hook').hide();
+    }
+	if (!testConfig.run.popper) {
+        $('.module.pop').hide();
+    }
+	if (!testConfig.run.duplicator) {
+        $('.module.duplicate').hide();
+    }
+	if (!testConfig.run.setter) {
+        $('.module.set').hide();
+    }
+	if (!testConfig.run.limiter) {
+        $('.module.limit').hide();
+    }
+	if (!testConfig.run.prompter) {
+        $('.module.prompt').hide();
+    }
+	if (!testConfig.run.editor) {
+        $('.module.edit').hide();
     }
 }

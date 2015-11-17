@@ -643,10 +643,10 @@
 		<p>Click (class parameter) <a id="hooker-click-class-param" class="hooker-click func-hookerClick" href="#Hooker">Click</a></p>
 		
 		<p>Keypress <input type="text" id="hooker-keypress" class="hooker-keypress" data-func="hookerKeypress" /></p>
-		<p>Keypress (class parameter)<input type="text" id="hooker-keypress-class-param" class="hooker-keypress func-hookerKeypress" /></p>
+		<p>Keypress (class parameter) <input type="text" id="hooker-keypress-class-param" class="hooker-keypress func-hookerKeypress" /></p>
 		
 		<p>Keydown <input type="text" id="hooker-keydown" class="hooker-keydown" data-func="hookerKeydown" /></p>
-		<p>Keydown (class parameter)<input type="text" id="hooker-keydown-class-param" class="hooker-keydown func-hookerKeydown" /></p>
+		<p>Keydown (class parameter) <input type="text" id="hooker-keydown-class-param" class="hooker-keydown func-hookerKeydown" /></p>
 		
 		<p> Change
 			<select id="hooker-change-select" class="hooker-change" data-func="hookerChange">
@@ -685,7 +685,125 @@
 		
 	</div>
 	
+	<div class="module pop" id="Popper">
+		<h1>Popper</h1>
+		
+		<p><a href="#" class="popper" data-href="http://www.google.com" id="Popper1">Open window (data attribute)</a></p>
+		<p><a href="http://www.google.com" class="popper" id="Popper2">Open window (href attribute)</a></p>
+		
+	</div>
+	
+	<div class="module duplicate" id="Duplicator">
+		<h1>Duplicator</h1>
+		
+		<div id="duplicator-target">
+			<p id="item_1" class="item_1">Item [1] item_1</p>
+		</div>
+		<p><input type="text" id="duplicator-counter" style="width:3em" /></p>
+		<p>
+			<a href="#" class="duplicator" id="duplicator-link" data-source="#item_1" data-target="#duplicator-target" data-counter="#duplicator-counter">Duplicate</a>
+			<button class="duplicator" id="duplicator-button" data-source="#item_1" data-target="#duplicator-target" data-counter="#duplicator-counter">Duplicate</button>
+		</p>
+		<p>
+			<a href="#" class="duplicator sourceElement-item_1 targetElement-duplicator-target countElement-duplicator-counter" id="duplicator-link-class-param">Duplicate</a>
+			<button class="duplicator sourceElement-item_1 targetElement-duplicator-target countElement-duplicator-counter" id="duplicator-button-class-param">Duplicate</button>
+		</p>
+		
+	</div>
+	
+	<div class="module set" id="Setter">
+		<h1>Setter</h1>
+		
+		<p>
+			<select id="setter-select">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+			</select>
+			<a href="#" class="setter" id="setter-select-link" data-target="#setter-select" data-value="3">Set</a>
+			<button class="setter" id="setter-select-button" data-target="#setter-select" data-value="3">Set</button>
+		</p>
+		
+		<p>
+			<input type="text" id="setter-input" />
+			<a href="#" class="setter" id="setter-input-link" data-target="#setter-input" data-value="3">Set</a>
+			<button class="setter" id="setter-input-button" data-target="#setter-input" data-value="3">Set</button>
+		</p>
+		
+		<p>
+			<select id="setter-select-class-param">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+			</select>
+			<a href="#" class="setter" id="setter-select-class-param-link" data-target="#setter-select-class-param" data-value="3">Set</a>
+			<button class="setter" id="setter-select-class-param-button" data-target="#setter-select-class-param" data-value="3">Set</button>
+		</p>
+		
+		<p>
+			<input type="text" id="setter-input-class-param" />
+			<a href="#" class="setter targetEl-setter-input-class-param value-3" id="setter-input-class-param-link">Set</a>
+			<button class="setter targetEl-setter-input-class-param value-3" id="setter-input-class-param-button">Set</button>
+		</p>
+		
+	</div>
+	
+	<div class="module limit" id="Limiter">
+		<h1>Limiter</h1>
+		
+		<p>
+			<input type="text" id="limiter-input" class="limiter" data-limit="5" data-target="#limiter-input-notification" />
+		</p>
+		<p id="limiter-input-notification">You can enter 5 characters</p>
+		
+	</div>
+	
+	<div class="module prompt" id="Prompter">
+		<form action="#" method="post">
+			<p>
+				<input class="prompter" title="Type something here" name="prompter" type="text" />
+			</p>
+		</form>
+	</div>
+	
+	<div class="module edit" id="Editor">
+	
+		<p><input type="button" id="dummyButton" value="Dummy" /></p>
+	
+		<p id="withButtons">
+			<span class="editor" data-targetPage="/docs/editor/test1" data-targetElement="#withButtonsNotify">Test 1</span>
+			<div id="withButtonsNotify"></div>
+		</p>
+		
+		<p id="withButtonsCancel">
+			<span class="editor" data-targetPage="/docs/editor/test2" data-targetElement="#withButtonsNotify">Test 2</span>
+			<div id="withButtonsNotify"></div>
+		</p>
+	
+		<p id="classParamWithButtons">
+			<span class="editor targetPage-/docs/editor/test3 targetElement-classParamWithButtonsNotify">Test 3</span>
+			<div id="classParamWithButtonsNotify"></div>
+		</p>
+		
+		<p id="classParamWithButtonsCancel">
+			<span class="editor targetPage-/docs/editor/test4 targetElement-classParamWithButtonsNotify">Test 4</span>
+			<div id="classParamWithButtonsNotify"></div>
+		</p>
+		
+		<p id="withoutButtons">
+			<span class="editor" data-targetPage="/docs/editor/test5" data-targetElement="#withoutButtonsNotify" data-autosave="true">Test 5</span>
+			<div id="withoutButtonsNotify"></div>
+		</p>
+	
+		<p id="classParamWithoutButtons">
+			<span class="editor targetPage-/docs/editor/test6 targetElement-classParamWithoutButtonsNotify autosave-true">Test 6</span>
+			<div id="classParamWithoutButtonsNotify"></div>
+		</p>
+		
+	</div>
+	
 	<script src="jquery-1.11.0.js"></script>
+	<script src="jquery.mockjax.min.js"></script>
 	<script src="performer.js"></script>
 	<script src="jquery.color.js"></script>
 	<script src="qunit-1.17.1.js"></script>
@@ -707,8 +825,15 @@
 	<script src="looper.tests.js"></script>
 	<script src="pager.tests.js"></script>
 	<script src="hooker.tests.js"></script>
+	<script src="popper.tests.js"></script>
+	<script src="duplicator.tests.js"></script>
+	<script src="setter.tests.js"></script>
+	<script src="limiter.tests.js"></script>
+	<script src="editor.tests.js"></script>
 	
 	<script>
+		Performer.isDebugging = true;
+	
 		var hookerTarget = $('#hooker-target');
 		function hookerClick( el, e ) {
 			hookerTarget.html( 'Clicked, ' + el[0].id );

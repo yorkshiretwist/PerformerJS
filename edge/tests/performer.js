@@ -21,7 +21,7 @@ This work is released under any of the following licenses, please choose the one
     version = '2.0.0',
 	
 	// whether Performer is in debug mode
-	isDebugging = true,
+	isDebugging = false,
 	
 	// whether Performer is initialised
 	isInitialised = false,
@@ -31,6 +31,9 @@ This work is released under any of the following licenses, please choose the one
 	
 	// stores the counter, incremented for unique ids
 	counter = 0,
+	
+	// an array of duplicator elements
+	duplicators = [],
 	
 	// get the document body
 	body = $('body'),
@@ -85,22 +88,34 @@ This work is released under any of the following licenses, please choose the one
 		// add the CSS classes
 		addStyles();
 		
+		// attach transformers and event handlers to the body element
+		body = $('body');
+		initElement( body );
+		
+		// initialise internal properties
+		Performer.duplicators = [];
+		
+		// set Performer as being initialised
+		Performer.isInitialised = true;
+	},
+	
+	// attach transformers and event handlers to an element
+	initElement = function( el ) {
+		
 		// attach transformers, which perform actions on page load
 		try {
-			attachTransformers();
+			attachTransformers( el );
 		} catch ( ex ) {
 			debugException( ex );
 		}
 		
 		// attach listeners, which respond to events on the page
 		try {
-			attachListeners();
+			attachListeners( el );
 		} catch ( ex ) {
 			debugException( ex );
 		}
 		
-		// set Performer as being initialised
-		Performer.isInitialised = true;
 	},
 	
 	// checks the version of jQuery to ensure it is new enough
@@ -122,7 +137,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// display an exception if Performer is in debug mode
 	debugException = function( ex ) {
-		if ( ! isDebugging ) {
+		if ( ! Performer.isDebugging || ! window.console ) {
 			return;
 		}
 		console.exception ? console.exception( message ) : console.log( ex );
@@ -130,7 +145,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// display an error message if Performer is in debug mode
 	debugError = function( message ) {
-		if ( ! isDebugging ) {
+		if ( ! Performer.isDebugging || ! window.console ) {
 			return;
 		}
 		console.error ? console.error( message ) : console.log( message );
@@ -138,7 +153,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// display a warning message if Performer is in debug mode
 	debugWarning = function( message ) {
-		if ( ! isDebugging ) {
+		if ( ! Performer.isDebugging || ! window.console ) {
 			return;
 		}
 		console.warn ? console.warn( message ) : console.log( message );
@@ -146,7 +161,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// display an informational message if Performer is in debug mode
 	debugInfo = function( message ) {
-		if ( ! isDebugging ) {
+		if ( ! Performer.isDebugging || ! window.console ) {
 			return;
 		}
 		console.info ? console.info( message ) : console.log( message );
@@ -154,7 +169,7 @@ This work is released under any of the following licenses, please choose the one
 	
 	// display an error message if Performer is in debug mode
 	debug = function( message ) {
-		if ( ! isDebugging ) {
+		if ( ! Performer.isDebugging || ! window.console ) {
 			return;
 		}
 		console.log( message );
@@ -169,100 +184,125 @@ This work is released under any of the following licenses, please choose the one
 	},
 	
 	// attach transformers, which perform actions on page load
-	attachTransformers = function() {
+	attachTransformers = function( el ) {
 	
 		// hider
-		$( '.' + defaults.hideClass, body ).each( function() {
+		$( '.' + defaults.hideClass, el ).each( function() {
 			doHide( $( this ) );
 		});
 		
 		// shower
-		$( '.' + defaults.showClass, body ).each( function() {
+		$( '.' + defaults.showClass, el ).each( function() {
 			doShow( $( this ) );
 		});
 		
 		// focusser
-		$( '.focusser', body ).each( function(){
+		$( '.focusser', el ).each( function(){
 			focus( $( this ) );
 		});
 		
 		// truncator
-		$( '.truncator', body ).each( function() {
+		$( '.truncator', el ).each( function() {
 			truncate( $( this ) );
 		});
 		
 		// looper
-		$( '.looper', body ).each( function(){
+		$( '.looper', el ).each( function(){
 			initLooper( $( this ) );
 		});
 		
 		// pager
-		$( '.pager', body ).each( function(){
+		$( '.pager', el ).each( function(){
 			initPager( $( this ) );
 		});
 		
 		// submitlocker
-		$( 'form.submitlocker', body ).each( function(){
+		$( 'form.submitlocker', el ).each( function(){
 			submitlocker( $( this ) );
+		});
+		
+		// submitlocker
+		$( 'input.prompter,textarea.prompter', el ).each( function(){
+			setPrompt( $( this ) );
 		});
 	},
 	
 	// attach listeners, which respond to events on the page
-	attachListeners = function() {
+	attachListeners = function( el ) {
 	
 		// toggler
-		body.on( 'click keypress', "a.toggler,form button.toggler,form input[type='button'].toggler,form input[type='submit'].toggler", toggle );
-		body.on( 'change', "form input[type='checkbox'].toggler,form input[type='radio'].toggler,form select.toggler", toggle );
+		el.on( 'click keypress', "a.toggler,form button.toggler,form input[type='button'].toggler,form input[type='submit'].toggler", toggle );
+		el.on( 'change', "form input[type='checkbox'].toggler,form input[type='radio'].toggler,form select.toggler", toggle );
 		
 		// group toggler: for backwards compatibility with Performer syntax < v2.0
-		body.on( 'click keypress', '.grouptoggler', toggle );
+		el.on( 'click keypress', '.grouptoggler', toggle );
 		
 		// switcher
-		body.on( 'click keypress', '.switcher', switcher );
+		el.on( 'click keypress', '.switcher', switcher );
 		
 		// sizer
-		body.on( 'click keypress', '.sizer', size );
+		el.on( 'click keypress', '.sizer', size );
 		
 		// styler
-		body.on( 'click keypress', "a.styler,form button.styler,form input[type='button'].styler,form input[type='submit'].styler", style );
-		body.on( 'change', "form input[type='checkbox'].styler,form input[type='radio'].styler,form select.styler", style );
+		el.on( 'click keypress', "a.styler,form button.styler,form input[type='button'].styler,form input[type='submit'].styler", style );
+		el.on( 'change', "form input[type='checkbox'].styler,form input[type='radio'].styler,form select.styler", style );
         
         // tabber
-        body.on( 'click keypress', "a.tabber,form button.tabber,form input[type='button'].tabber,form input[type='submit'].tabber", tab );
-        body.on( 'change', "form input[type='checkbox'].tabber,form input[type='radio'].tabber,form select.tabber", tab );
+        el.on( 'click keypress', "a.tabber,form button.tabber,form input[type='button'].tabber,form input[type='submit'].tabber", tab );
+        el.on( 'change', "form input[type='checkbox'].tabber,form input[type='radio'].tabber,form select.tabber", tab );
 		
 		// accordianer
-        body.on( 'click keypress', "a.accordianer,form button.accordianer,form input[type='button'].accordianer,form input[type='submit'].accordianer", accordian );
-        body.on( 'change', "form input[type='checkbox'].accordianer,form input[type='radio'].accordianer,form select.accordianer", accordian );
+        el.on( 'click keypress', "a.accordianer,form button.accordianer,form input[type='button'].accordianer,form input[type='submit'].accordianer", accordian );
+        el.on( 'change', "form input[type='checkbox'].accordianer,form input[type='radio'].accordianer,form select.accordianer", accordian );
 		
 		// looper
-        body.on( 'click keypress', "a.looperforward,form button.looperforward,form input[type='button'].looperforward,form input[type='submit'].looperforward", loop );
-		body.on( 'click keypress', "a.looperback,form button.looperback,form input[type='button'].looperback,form input[type='submit'].looperback", loop );
-		body.on( 'click keypress', "a.looperfirst,form button.looperfirst,form input[type='button'].looperfirst,form input[type='submit'].looperfirst", loop );
-		body.on( 'click keypress', "a.looperlast,form button.looperlast,form input[type='button'].looperlast,form input[type='submit'].looperlast", loop );
-		body.on( 'click keypress', "a.looperitem,form button.looperitem,form input[type='button'].looperitem,form input[type='submit'].looperitem", loop );
-		body.on( 'click keypress', "a.looperitem,form button.looperitem,form input[type='button'].looperitem,form input[type='submit'].looperitem", loop );
-		body.on( 'click keypress', "a.looperpause,form button.looperpause,form input[type='button'].looperpause,form input[type='submit'].looperpause", loop );
-		body.on( 'click keypress', "a.looperstop,form button.looperstop,form input[type='button'].looperstop,form input[type='submit'].looperstop", loop );
-		body.on( 'click keypress', "a.looperplay,form button.looperplay,form input[type='button'].looperplay,form input[type='submit'].looperplay", loop );
-		body.on( 'click keypress', "a.looperstart,form button.looperstart,form input[type='button'].looperstart,form input[type='submit'].looperstart", loop );
+        el.on( 'click keypress', "a.looperforward,form button.looperforward,form input[type='button'].looperforward,form input[type='submit'].looperforward", loop );
+		el.on( 'click keypress', "a.looperback,form button.looperback,form input[type='button'].looperback,form input[type='submit'].looperback", loop );
+		el.on( 'click keypress', "a.looperfirst,form button.looperfirst,form input[type='button'].looperfirst,form input[type='submit'].looperfirst", loop );
+		el.on( 'click keypress', "a.looperlast,form button.looperlast,form input[type='button'].looperlast,form input[type='submit'].looperlast", loop );
+		el.on( 'click keypress', "a.looperitem,form button.looperitem,form input[type='button'].looperitem,form input[type='submit'].looperitem", loop );
+		el.on( 'click keypress', "a.looperitem,form button.looperitem,form input[type='button'].looperitem,form input[type='submit'].looperitem", loop );
+		el.on( 'click keypress', "a.looperpause,form button.looperpause,form input[type='button'].looperpause,form input[type='submit'].looperpause", loop );
+		el.on( 'click keypress', "a.looperstop,form button.looperstop,form input[type='button'].looperstop,form input[type='submit'].looperstop", loop );
+		el.on( 'click keypress', "a.looperplay,form button.looperplay,form input[type='button'].looperplay,form input[type='submit'].looperplay", loop );
+		el.on( 'click keypress', "a.looperstart,form button.looperstart,form input[type='button'].looperstart,form input[type='submit'].looperstart", loop );
 		
 		// pager
-		body.on( 'click keypress', '.performer-pagination a', page );
+		el.on( 'click keypress', '.performer-pagination a', page );
 		
 		// morpher
-		body.on( 'click keypress', "a.morpher,form button.morpher,form input[type='button'].morpher,form input[type='submit'].morpher", morph );
+		el.on( 'click keypress', "a.morpher,form button.morpher,form input[type='button'].morpher,form input[type='submit'].morpher", morph );
 		
 		// hooker
-		body.on( 'click keypress', '.hooker-click', hook );
-        body.on( 'keypress', '.hooker-keypress', hook );
-		body.on( 'keydown', '.hooker-keydown', hook );
-        body.on( 'change', '.hooker-change', hook );
-        body.on( 'mouseover', '.hooker-mouseover', hook );
-        body.on( 'mouseout', '.hooker-mouseout', hook );
-        body.on( 'submit', '.hooker-submit', hook );
-        body.on( 'focus', '.hooker-focus', hook );
-        body.on( 'blur', '.hooker-blur', hook );
+		el.on( 'click keypress', '.hooker-click', hook );
+        el.on( 'keypress', '.hooker-keypress', hook );
+		el.on( 'keydown', '.hooker-keydown', hook );
+        el.on( 'change', '.hooker-change', hook );
+        el.on( 'mouseover', '.hooker-mouseover', hook );
+        el.on( 'mouseout', '.hooker-mouseout', hook );
+        el.on( 'submit', '.hooker-submit', hook );
+        el.on( 'focus', '.hooker-focus', hook );
+        el.on( 'blur', '.hooker-blur', hook );
+		
+		// popper
+		el.on( 'click keypress', '.popper', pop );
+		
+		// duplicator
+		el.on( 'click keypress', '.duplicator', duplicate );
+		
+		// setter
+		el.on( 'click keypress', '.setter', set );
+		
+		// limiter
+		el.on( 'keyup keydown', '.limiter', limit );
+		
+		// prompter
+		el.on( 'focus', 'input.prompter,textarea.prompter', removePrompt );
+        el.on( 'blur', 'input.prompter,textarea.prompter', checkPrompt);
+		
+		// editor
+		el.on( 'click keypress', '.editor', edit );
+        el.on( 'click keypress', '.uneditor', unEdit );
 	},
 	
 	// ========================================================================================
@@ -275,8 +315,8 @@ This work is released under any of the following licenses, please choose the one
 			return true;
 		}
 		
-		// set the prefix to use with < v2.0 syntax
 		var compatibilityPrefix = '#';
+		
 		// if the element has the grouptoggler class then the prefix needs to be a dot
 		if ( el.hasClass( 'grouptoggler' ) ) {
 			compatibilityPrefix = '.';
@@ -393,14 +433,8 @@ This work is released under any of the following licenses, please choose the one
 			return true;
 		}
 		
-		// get the target
-		var target = getTarget( el );
-		if ( ! target ) {
-			return true;
-		}
-		
 		// get the target element(s)
-		var targetEl = $( target );
+		var targetEl = getTargetElement( el );
 		if ( ! targetEl.length ) {
 			return true;
 		}
@@ -602,6 +636,9 @@ This work is released under any of the following licenses, please choose the one
 	
 	// starts the animation of the given looper 
 	startLooperAnimation = function( looper ) {
+		if ( ! looper.is( ':visible' ) ) {
+			return;
+		}
 		var delay = looper.dataVar( 'delay' ),
 			items = looper.children(),
 			currentIndex,
@@ -626,14 +663,8 @@ This work is released under any of the following licenses, please choose the one
 			return true;
 		}
 		
-		// get the target
-		var target = getTarget( el );
-		if ( ! target ) {
-			return true;
-		}
-		
-		// get the target element(s) and child items
-		var targetEl = $( target );
+		// get the target element(s)
+		var targetEl = getTargetElement( el );
 		if ( ! targetEl.length ) {
 			return true;
 		}
@@ -780,17 +811,8 @@ This work is released under any of the following licenses, please choose the one
 			return true;
 		}
 		
-		// get the target
-		var compatibilityPrefix = '#';
-		var target = getTarget( el, compatibilityPrefix );
-		
-		// check a target has been given
-		if ( ! target ) {
-			return true;
-		}
-		
 		// get the target element(s)
-		var targetEl = $( target );
+		var targetEl = getTargetElements( el );
 		if ( ! targetEl.length ) {
 			return true;
 		}
@@ -848,7 +870,7 @@ This work is released under any of the following licenses, please choose the one
 		}
 		
 		// get the function
-		var func = el.dataVar( 'func', undefined )
+		var func = el.dataVar( 'func', undefined );
 		
 		// get the delay for the morphing
 		var delay = el.dataVar( 'delay', 0 ) * 1000;
@@ -862,7 +884,7 @@ This work is released under any of the following licenses, please choose the one
 		}
 	},
 	
-	// calls a user-defined function
+	// calls a user-defined function passing the calling element and event
 	callFunc = function( func, el, e ) {
 		// check the function exists
 		if ( eval( 'typeof(' + func + ')' ) == 'function' ) {
@@ -870,6 +892,405 @@ This work is released under any of the following licenses, please choose the one
 			eval( func + '(el,e)' );
 		}
 	},
+	
+	// displays a popup window
+	pop = function( e ) {
+		var el = $( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		// only allow clicks and the enter key
+		if ( ! isValidTrigger( e ) ) {
+			return true;
+		}
+		
+		// get the href from the data attribute
+		var href = el.dataVar( 'href', undefined );
+		
+		// use the href attribute if there is one
+		if ( ! href && el[0].href ) {
+			href = el[0].href;
+		}
+		
+		// if there's still no href we can't do anything
+		if ( ! href ) {
+			return true;
+		}
+		
+		var targetName = el.dataVar( 'targetName', undefined );
+		if ( ! targetName ) {
+			targetName = 'popupwindow_' + Performer.nextCounter();
+		}
+		
+		// get the options
+		var options = el.dataVar( 'options', 'scrollbars=yes,toolbar=yes,menubar=yes,location=yes,status=yes,directories=yes' );
+		
+		// open the window
+		var win = window.open( href, targetName, options );
+		if ( window.focus ) { 
+			win.focus();
+		}
+		
+		// stop the event propagating
+		return stopEvent( e );
+	},
+	
+	// duplicates an element
+	duplicate = function( e ) {
+        var el = $( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		// get the source and target elements
+		var source = $( el.dataVar( [ 'source', [ 'sourceElement', '#' ] ], undefined ) );
+		var targetSelector = el.dataVar( [ 'target', [ 'targetElement', '#' ] ], undefined );
+		var target = $( targetSelector );
+
+		if ( ! source.length || ! target.length ) {
+			return true;
+		}
+		
+		var start = el.dataVar( 'start', 1 ) - 1;
+		var counter = $( el.dataVar( [ 'counter', 'countElement' ], undefined ) );
+		var items = start + 2;
+		
+		// clone the element and append it to the target
+		var clonedElement = $( source[0].cloneNode( true ) );
+		var newElement = target.append( clonedElement );
+		
+		// store the count of duplicated items
+		if ( typeof( Performer.duplicators[ targetSelector ] ) == 'undefined' ) {
+			Performer.duplicators[ targetSelector ] = items;
+		} else {
+			items = Performer.duplicators[ targetSelector ] + 1;
+			Performer.duplicators[ targetSelector ] = items;
+		}
+		
+		// do any string replacements
+		clonedElement.html( clonedElement.html().replace( /_1/g, '_' + items ) );
+        clonedElement.html( clonedElement.html().replace( /[1]/g, items ) );
+        clonedElement[0].id = clonedElement[0].id.replace( /_1/g, '_' + items );
+
+		var clonedElementClass = clonedElement.attr( 'class' );
+		if ( clonedElementClass != '' ) {
+			clonedElement.attr( 'class', clonedElementClass.replace( /_1/g, '_' + items ) );
+        }
+		
+		// update the counter, if one is set
+		if ( counter.length ) { 
+			counter.val( items ); 
+		}
+		
+		// stop the event propagating
+		return stopEvent( e );
+    },
+	
+	// sets the value of a form field
+    set = function( e ) {
+		var el = $( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		// get the target element(s)
+		var targetEl = getTargetElement( el );
+		if ( ! targetEl.length ) {
+			return true;
+		}
+		
+		// get the value
+		var value = el.dataVar( 'value', undefined );
+		if ( ! value ) {
+			return true;
+		}
+		
+		// get the value
+		targetEl.val( value );
+		
+        // stop the event propagating
+		return stopEvent( e );
+    },
+	
+	// limit the amount of text in an input box or textarea
+    limit = function( e ) {
+		var el = $( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		// get the character limit
+		var limit = el.dataVar( [ 'limit', 'lengthLimit' ], undefined );
+		if ( ! limit ) {
+			return true;
+		}
+		limit = parseInt( limit );
+		
+		// get the element that will show the remaining characters
+		var notificationEl = getTargetElement( el );
+		
+		// get the notification messages
+		var charsRemainingMessage = el.dataVar( 'remainingMsg', '# characters left' );
+		var limitMessage = el.dataVar( 'limitMsg', 'Limit reached' );
+		
+		// get the current length
+		var currentLength = el.val().length;
+		
+		// get the characters left, taking off an additional 1 as this fires *before the character has been inserted*
+		var charsRemaining = limit - currentLength;
+		
+		if ( charsRemaining <= 0 ) {
+			
+			// update the message
+			if ( notificationEl.length && charsRemaining == 0 ) {
+				notificationEl.html( limitMessage );
+			}
+			
+			// check if the key is an allowed one
+			var key = keyCode( e );
+			if ( key == 8 || key == 46 || key == 37 || key == 39 ) {
+				return true;
+			}
+			
+			// stop the event propagating
+			e.stopPropagation();
+			return stopEvent( e );
+			
+		}
+		
+		// update the message if needed
+		if ( notificationEl.length ) {
+			notificationEl.html( charsRemainingMessage.replace( '#', charsRemaining ) );
+		}
+		
+		return true;
+    },
+	
+	// set the prompt text for a text or textarea element
+    setPrompt = function( el ) {
+		var placeHolderSupport = ('placeholder' in document.createElement('input')),
+			placeholder = el.attr(' placeholder' ),
+			title = el.attr( 'title' );
+		// if the browser supports the HTML5 placeholder attribute then use it
+		// (from http://robertnyman.com/2010/06/17/adding-html5-placeholder-attribute-support-through-progressive-enhancement/)
+		if ( placeHolderSupport ) {
+			if( placeholder && placeholder.length ) {
+				return;
+			}
+			el.attr( 'placeholder', title );
+			return;
+		}
+		
+		if ( el.val().length ) {
+			return;
+		}
+		
+		var form = el.parents( 'form' );
+		if ( form.length ) {
+			form.on( 'submit', function() {
+				clearPrompt( el );
+			});
+		}
+		
+		el.val( title );
+		el.addClass( 'performer-prompter' );
+    },
+	
+    // remove a prompt
+    removePrompt = function( e ) {
+		var el = $( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		clearPrompt( el );
+    },
+	
+    // clear the prompt
+    clearPrompt = function( el ) {
+		var title = el.attr( 'title' );
+		
+		if ( el.val() != title ) {
+			return;
+		}
+		
+		el.val( '' );
+		el.removeClass( 'performer-prompter' );
+    },
+	
+    // check a prompt is present
+    checkPrompt = function( e ) {
+		var el = $( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		var title = el.attr( 'title' );
+		
+		if ( el.val().length ) {
+			return;
+		}
+		
+		setPrompt( el );
+    },
+	
+	// edit the contents of an element and send the results to a processing page
+    edit = function( e ) {
+        var el = $( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		// only allow clicks and the enter key
+		if ( ! isValidTrigger( e ) ) {
+			return true;
+		}
+		
+		// if the click is on the unedit element then return, we catch this separately
+		if ( $( e.target ).hasClass( 'uneditor' ) ) {
+			return false;
+		}
+		
+		// if the element already contains a form then we have to return here
+		if ( $( 'form', el ).length ) {
+			return;
+		}
+		
+		var id = el.identify(),
+			targetPage = el.dataVar( 'targetPage', [] ),
+			targetElement = getTargetElement( el ),
+			autosave = el.dataVar( 'autosave', false ),
+			inputType = el.dataVar( 'inputType', 'input' );
+			
+		if ( ! targetPage.length || ! inputType.length ) {
+			return;
+		}
+		
+		// build the editing form
+		el.html( buildEditForm( el, targetPage, inputType, autosave ) );
+		
+		// get the created elements
+		var form = $( '#' + id + '-editor' ),
+			valueEl = $( '#' + id + '-value' );
+		
+		// remove the listeners to prevent duplication problems
+		el.off( 'click', edit );
+		el.off( 'keypress', edit );
+		
+		// if autosaving save when the input/textbox is blurred
+		if ( autosave ) {
+			
+			valueEl.on( 'blur', function( e ) {
+				submitEditForm( id, form, form, targetPage);
+			});
+			
+		// otherwise catch the form submission and overwrite the original value
+		} else {
+			
+			form.on( 'submit', function( e ) {
+				stopEvent( e );
+				submitEditForm( id, form, valueEl, targetPage);
+			});
+			
+		}
+		
+		valueEl.focus();
+		//initElement( el );
+    },
+	
+	submitEditForm = function( id, form, targetElement, targetPage ) {
+		// get the params to send
+		var params = $( form ).serialize();
+		
+		targetElement.addClass( 'performerloading' );
+		
+		$.ajax({ 
+			method: 'post',
+			url: targetPage,
+			data: params
+		})
+		.done(function( response ) {
+			if ( targetElement && targetElement.length ) {
+				if ( targetElement.prop( 'tagName' ) === 'INPUT' ) {
+					targetElement.val( response );
+				} else {
+					targetElement.html( response );
+				}
+			}
+			hideEditForm( '#' + id, true );
+		})
+		.fail(function( jqXHR, textStatus ) {
+			debugError( 'Submit edit form failed: ' + jqXHR.statusText );
+		});
+	},
+	
+    // build the element editing form
+    buildEditForm = function( el, targetPage, inputType, autosave ) {
+		if ( ! el.length || ! targetPage || ! targetPage.length || ! inputType || ! inputType.length ) {
+			return;
+		}
+		
+		var id = el.identify(),
+			value = el.html(),
+			editForm;
+		
+		editForm = '<form id="' + id + '-editor" class="performer-editor" action="' + targetPage + '" method="post">\n';
+		
+		if ( inputType == 'input' ) {
+			editForm += '<input type="text" id="' + id + '-value" name="' + id + '" value="' + value + '" />\n';
+		} else {
+			editForm += '<textarea id="' + id + '-value" name="' + id + '" rows="6" cols="30">' + value + '</textarea>\n';
+		}
+		
+		if ( ! autosave ) {
+			editForm += '<input type="submit" id="' + id + '-save" name="' + id + '-save" value="Save" />\n'
+			editForm += '<a href=\"#\" class="uneditor" data-targetEl="#' + id + '">Cancel</a>\n';
+		}
+		
+		editForm += '</form>\n<span style="display:none" id="' + id + '-originaltext">' + value + '</span>';
+		
+		return editForm;
+    },
+	
+    // hide an edit form and optionally set the text to the inputted value
+    hideEditForm = function( idSelector, changeValue ) {
+		var el = $( idSelector );
+		if ( ! el.length ) {
+			return;
+		}
+		
+        if ( changeValue ) {
+            el.html( $( idSelector + '-value' ).val() );
+        } else {
+            el.html( $( idSelector + '-originaltext' ).html() );
+        }
+		
+		// fire the callback
+		doCallback();
+		
+		// reattach the edit handlers
+        el.on( 'click', edit );
+        el.on( 'keypress', edit );
+    },
+	
+    // cancel a Performer.Edit command and return the element to normal
+    unEdit = function( e ) {
+		var el = $( this );
+		if ( !el.length ) {
+			return true;
+		}
+		
+		// only allow clicks and the enter key
+		if ( ! isValidTrigger( e ) ) {
+			return true;
+		}
+		
+		var id = getTarget( el );
+		
+		hideEditForm( id, false );
+		stopEvent( e );
+    },
 	
 	// ========================================================================================
 	// Visibility methods
@@ -1051,14 +1472,14 @@ This work is released under any of the following licenses, please choose the one
 	// Event methods
 	
 	// stops the default action of the given event
-	stopEvent = function(e) {
-		e.preventDefault;
+	stopEvent = function( e ) {
+		e.preventDefault();
 		return false;
 	},
 	
 	// runs the callback function, if one is set
 	doCallback = function() {
-		if (typeof Performer.callback == 'function') {
+		if ( typeof Performer.callback == 'function' ) {
 			Performer.callback();
 		}
 	},
@@ -1096,7 +1517,7 @@ This work is released under any of the following licenses, please choose the one
 		return [];
 	},
 	
-	// get the target element from the given elements data attribute or class parameter
+	// get the target element selector from the given elements data attribute or class parameter
 	getTarget = function( el, compatibilityPrefix ) {
 		if ( ! el.length ) {
 			return false;
@@ -1108,31 +1529,82 @@ This work is released under any of the following licenses, please choose the one
 		
 		return el.dataVar( [
 			'target', // 2.0+ syntax, using data attributes
+			'targetElement', // 2.0+ syntax, using data attributes
 			['targetEl', compatibilityPrefix], // < v2.0 syntax, using class parameters
+			['targetEement', compatibilityPrefix], // < v2.0 syntax, using class parameters
 			['rel', compatibilityPrefix] // < v2.0 syntax, using the rel attribute
 		], false );
 	},
+	
+	// get the target element for the given element
+	getTargetElement = function( el, compatibilityPrefix ) {
+		var target = getTarget( el, compatibilityPrefix );
+		if ( ! target ) {
+			return $(undefined);
+		}
+		return $( target );
+	},
 		
-	// gets the target from the element(s) in the given collection
-	getTargets = function( el ) {
+	// gets the target selectors from the element(s) in the given collection
+	getTargets = function( el, compatibilityPrefix ) {
 		if ( ! el.length ) {
 			return [];
 		}
 		// get the targets
 		var targets = [];
 		el.each( function( index ) {
-			targets.push( getTarget( $( this ) ) );
+			targets.push( getTarget( $( this ), compatibilityPrefix ) );
 		});
 		return $.unique( targets );
+	},
+	
+	// get the targets element for the given elements
+	getTargetElements = function( el, compatibilityPrefix ) {
+		var targets = getTargets( el, compatibilityPrefix );
+		if ( ! targets ) {
+			return $(undefined);
+		}
+		return $( targets );
+	},
+	
+	// ========================================================================================
+	// Utility methods
+	
+	// increment the internal counter and return the number
+	nextCounter = function() {
+		Performer.counter = Performer.counter + 1;
+		return Performer.counter;
+	},
+	
+	// return the keycode for an event
+    keyCode = function( e ) {
+        if ( window.event ) {
+            return window.event.keyCode;
+        } else if ( e ) {
+            return e.which;
+        } else {
+            return false;
+        }
+    },
+	
+	// returns a value indicating if the event was triggered by a click or valid triggering keypress
+	isValidTrigger = function( e ) {
+		// only allow clicks and the enter key
+		if ( e.type != 'click' && keyCode( e ) != 13 ) {
+			return false;
+		}
+		return true;
 	};
 	
 	return {
 		callback: callback,
 		resetCallback: resetCallback,
 		counter: counter,
+		nextCounter: nextCounter,
 		init: init,
 		isInitialised: isInitialised,
 		initialisationError: initialisationError,
+		isDebugging: isDebugging,
 		enums: enums
 	}
 
@@ -1146,8 +1618,7 @@ jQuery.fn.extend({
         var el = $(this),
 			id = el.attr('id');
         if ( ! id || id === '' ) {
-			Performer.counter = Performer.counter + 1;
-            id = 'anonymous_element_' + Performer.counter;
+            id = 'anonymous_element_' + Performer.nextCounter();
             el.attr('id', id);
         }
         return id;
@@ -1161,7 +1632,7 @@ jQuery.fn.extend({
 		if ( typeof paramName === 'string' ) {
 		
 			// see if the variable is defined in a data attribute (v2.0+)
-			val = this.data( paramName );
+			val = this.getData( paramName );
 			if ( val !== undefined ) {
 				return val;
 			}
@@ -1207,9 +1678,11 @@ jQuery.fn.extend({
 	// gets a variable from a data attribute (v2.0+)
 	getData: function( paramName ) {
 		if ( typeof paramName === 'string' ) {
+			paramName = paramName.toLowerCase();
 			return this.data( paramName );
 		} else {
-			return this.data( paramName[0] );
+			var thisParamName = paramName[0].toLowerCase();
+			return this.data( thisParamName );
 		}
 	},
 	

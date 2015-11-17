@@ -1,0 +1,50 @@
+Styling:
+- Hider
+- Shower
+- Toggler
+- GroupToggler
+- Switcher
+- Sizer
+- Styler
+- Morpher
+
+Text:
+- Truncator
+Editor
+
+General:
+- Hooker
+Debugging
+
+Navigation:
+- Tabber
+- Accordianer
+- Looper
+- Pager
+- Popper
+
+Notification:
+ModalWindower
+ContextMenuer
+ToolTipper
+
+AJAX:
+Loader
+ToggleLoader
+ReLoader
+PreLoader
+Submitter
+Deleter
+
+Forms:
+- Focusser
+- Duplicator
+- SubmitLocker
+- Setter
+? Prompter // test in IE9
+- Limiter
+FormChecker
+PasswordChecker
+Matcher
+Selector
+Resizer
